@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/couleurs_app.dart';
 import '../../core/widgets/bouton_principal.dart';
+import 'confirmation_rendez_vous_ecran.dart';
 
 class ReservationRendezVousEcran extends StatefulWidget {
-  const ReservationRendezVousEcran({super.key});
+  final bool modeModification;
+
+  const ReservationRendezVousEcran({
+    super.key,
+    this.modeModification = false,
+  });
 
   @override
   State<ReservationRendezVousEcran> createState() =>
@@ -13,25 +19,40 @@ class ReservationRendezVousEcran extends StatefulWidget {
 
 class _ReservationRendezVousEcranState
     extends State<ReservationRendezVousEcran> {
-
   String? vehiculeSelectionne;
 
-  final motifController =
-      TextEditingController();
+  final motifController = TextEditingController();
 
   final List<String> vehicules = [
     "Toyota Hilux (DK-8849-B)",
-    "Renault Clio IV (DK-2208-CD)"
+    "Renault Clio IV (DK-2208-CD)",
   ];
 
-  DateTime dateChoisie =
-      DateTime.now();
+  DateTime dateChoisie = DateTime.now();
 
-  TimeOfDay heureChoisie =
-      const TimeOfDay(
+  TimeOfDay heureChoisie = const TimeOfDay(
     hour: 9,
     minute: 30,
   );
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.modeModification) {
+      vehiculeSelectionne =
+          "Toyota Hilux (DK-8849-B)";
+
+      motifController.text =
+          "Changement plaquettes de frein";
+    }
+  }
+
+  @override
+  void dispose() {
+    motifController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,23 +63,23 @@ class _ReservationRendezVousEcranState
         backgroundColor: CouleursApp.grisFond,
         elevation: 0,
 
-        leading: TextButton(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            color: CouleursApp.orange,
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
-          child: const Text(
-            "Annuler",
-            style: TextStyle(
-              color: CouleursApp.orange,
-            ),
-          ),
         ),
 
         centerTitle: true,
 
-        title: const Text(
-          "Nouveau Rendez-vous",
-          style: TextStyle(
+        title: Text(
+          widget.modeModification
+              ? "Modifier Rendez-vous"
+              : "Nouveau Rendez-vous",
+          style: const TextStyle(
             color: CouleursApp.bleuFonce,
             fontWeight: FontWeight.bold,
           ),
@@ -73,8 +94,79 @@ class _ReservationRendezVousEcranState
               CrossAxisAlignment.start,
 
           children: [
+            Container(
+              padding: const EdgeInsets.all(16),
 
-            const Text("Véhicule"),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius:
+                    BorderRadius.circular(18),
+              ),
+
+              child: Row(
+                children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.all(12),
+
+                    decoration: BoxDecoration(
+                      color: CouleursApp.orange
+                          .withOpacity(0.1),
+                      borderRadius:
+                          BorderRadius.circular(
+                              12),
+                    ),
+
+                    child: const Icon(
+                      Icons.calendar_month,
+                      color: CouleursApp.orange,
+                    ),
+                  ),
+
+                  const SizedBox(width: 12),
+
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
+
+                      children: [
+                        Text(
+                          widget.modeModification
+                              ? "Modification du rendez-vous"
+                              : "Nouvelle demande",
+                          style:
+                              const TextStyle(
+                            fontWeight:
+                                FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+
+                        const SizedBox(
+                            height: 4),
+
+                        const Text(
+                          "Choisissez un véhicule, une date et un motif.",
+                          style: TextStyle(
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            const Text(
+              "Véhicule",
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
 
             const SizedBox(height: 8),
 
@@ -104,11 +196,9 @@ class _ReservationRendezVousEcranState
 
             Row(
               children: [
-
                 Expanded(
                   child: InkWell(
                     onTap: () async {
-
                       final date =
                           await showDatePicker(
                         context: context,
@@ -122,8 +212,7 @@ class _ReservationRendezVousEcranState
 
                       if (date != null) {
                         setState(() {
-                          dateChoisie =
-                              date;
+                          dateChoisie = date;
                         });
                       }
                     },
@@ -139,11 +228,29 @@ class _ReservationRendezVousEcranState
                         borderRadius:
                             BorderRadius
                                 .circular(
-                                    12),
+                                    14),
                       ),
 
-                      child: Text(
-                        "${dateChoisie.day}/${dateChoisie.month}/${dateChoisie.year}",
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons
+                                .calendar_today,
+                            color:
+                                CouleursApp
+                                    .orange,
+                            size: 18,
+                          ),
+
+                          const SizedBox(
+                              width: 10),
+
+                          Expanded(
+                            child: Text(
+                              "${dateChoisie.day}/${dateChoisie.month}/${dateChoisie.year}",
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -154,7 +261,6 @@ class _ReservationRendezVousEcranState
                 Expanded(
                   child: InkWell(
                     onTap: () async {
-
                       final heure =
                           await showTimePicker(
                         context: context,
@@ -181,13 +287,30 @@ class _ReservationRendezVousEcranState
                         borderRadius:
                             BorderRadius
                                 .circular(
-                                    12),
+                                    14),
                       ),
 
-                      child: Text(
-                        heureChoisie
-                            .format(
-                                context),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.access_time,
+                            color:
+                                CouleursApp
+                                    .orange,
+                            size: 18,
+                          ),
+
+                          const SizedBox(
+                              width: 10),
+
+                          Expanded(
+                            child: Text(
+                              heureChoisie
+                                  .format(
+                                      context),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -195,21 +318,24 @@ class _ReservationRendezVousEcranState
               ],
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
             const Text(
               "Motif de la visite",
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+              ),
             ),
 
             const SizedBox(height: 8),
 
             TextFormField(
               controller: motifController,
-              maxLines: 4,
+              maxLines: 5,
 
               decoration: _decoration(
                 hint:
-                    "Changement plaquettes de frein",
+                    "Décrivez le motif de votre visite",
               ),
             ),
 
@@ -224,19 +350,58 @@ class _ReservationRendezVousEcranState
                     Colors.green.shade50,
                 borderRadius:
                     BorderRadius.circular(
-                        12),
+                        14),
               ),
 
-              child: const Text(
-                "Votre demande sera confirmée par l'atelier sous 24h.",
+              child: const Row(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    color: Colors.green,
+                  ),
+
+                  SizedBox(width: 10),
+
+                  Expanded(
+                    child: Text(
+                      "Votre demande sera analysée et confirmée par l'atelier.",
+                    ),
+                  ),
+                ],
               ),
             ),
 
             const SizedBox(height: 30),
 
             BoutonPrincipal(
-              texte: "Réserver",
-              onPressed: () {},
+              texte: widget.modeModification
+                  ? "Mettre à jour"
+                  : "Réserver",
+
+              onPressed: () {
+                if (widget
+                    .modeModification) {
+                  ScaffoldMessenger.of(
+                          context)
+                      .showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        "Rendez-vous modifié avec succès",
+                      ),
+                    ),
+                  );
+
+                  Navigator.pop(context);
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          const ConfirmationRendezVousEcran(),
+                    ),
+                  );
+                }
+              },
             ),
 
             const SizedBox(height: 12),
@@ -250,8 +415,9 @@ class _ReservationRendezVousEcranState
                   Navigator.pop(context);
                 },
 
-                child:
-                    const Text("Annuler"),
+                child: const Text(
+                  "Annuler",
+                ),
               ),
             ),
           ],
@@ -271,15 +437,14 @@ class _ReservationRendezVousEcranState
 
       border: OutlineInputBorder(
         borderRadius:
-            BorderRadius.circular(12),
+            BorderRadius.circular(14),
         borderSide: BorderSide.none,
       ),
 
       enabledBorder:
           OutlineInputBorder(
         borderRadius:
-            BorderRadius.circular(12),
-
+            BorderRadius.circular(14),
         borderSide:
             const BorderSide(
           color: Color(0xFFE5E7EB),
@@ -289,8 +454,7 @@ class _ReservationRendezVousEcranState
       focusedBorder:
           OutlineInputBorder(
         borderRadius:
-            BorderRadius.circular(12),
-
+            BorderRadius.circular(14),
         borderSide:
             const BorderSide(
           color: CouleursApp.orange,
