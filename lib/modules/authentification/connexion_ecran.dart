@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/couleurs_app.dart';
+import 'inscription_ecran.dart';
 
 class ConnexionEcran extends StatefulWidget {
   const ConnexionEcran({super.key});
@@ -249,8 +250,14 @@ class _ConnexionEcranState extends State<ConnexionEcran> {
                   ),
 
                   GestureDetector(
-                    onTap: () {},
-
+                    onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const InscriptionEcran(),
+                          ),
+                        );
+                      },
                     child: const Text(
                       "Créer un compte",
 
