@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-
+import '../reparations/reparation_ecran.dart';
+import '../factures/facture_ecran.dart';
+import '../paiements/recus_paiement_ecran.dart';
+import '../parametres/parametres_ecran.dart';
 
 class MenuLateral extends StatelessWidget {
   const MenuLateral({super.key});
@@ -51,6 +54,54 @@ class MenuLateral extends StatelessWidget {
             title:
                 const Text("Mon profil"),
             onTap: () {},
+          ),
+
+          ListTile(
+            leading: const Icon(Icons.build),
+            title: const Text("Mes réparations"),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ReparationsEcran()),
+              );
+            },
+          ),
+
+          ListTile(
+            leading: const Icon(Icons.receipt_long),
+            title: const Text("Mes factures"),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const FacturesEcran()),
+              );
+            },
+          ),
+
+          ListTile(
+            leading: const Icon(Icons.payments),
+            title: const Text("Mes reçus de paiement"),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const RecusPaiementEcran()),
+              );
+            },
+          ),
+
+          ListTile(
+            leading: const Icon(Icons.settings),
+            title: const Text("Paramètres"),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ParametresEcran()),
+              );
+            },
           ),
 
           const Spacer(),

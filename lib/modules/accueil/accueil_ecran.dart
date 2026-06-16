@@ -6,6 +6,10 @@ import '../../core/widgets/carte_statistique.dart';
 import '../../core/widgets/element_menu.dart';
 import '../rendez_vous/reservation_rendez_vous_ecran.dart';
 import '../vehicules/formulaire_vehicule_ecran.dart';
+import '../reparations/reparation_ecran.dart';
+import '../factures/facture_ecran.dart';
+import '../paiements/recus_paiement_ecran.dart';
+import '../parametres/parametres_ecran.dart';
 
 class AccueilEcran extends StatelessWidget {
   const AccueilEcran({super.key});
@@ -186,7 +190,12 @@ class AccueilEcran extends StatelessWidget {
               ElementMenu(
                 icone: Icons.build_outlined,
                 titre: "Consulter mes réparations",
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ReparationsEcran()),
+                  );
+                },
               ),
 
               const SizedBox(height: 10),
@@ -194,7 +203,12 @@ class AccueilEcran extends StatelessWidget {
               ElementMenu(
                 icone: Icons.receipt_long_outlined,
                 titre: "Mes factures",
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const FacturesEcran()),
+                  );
+                },
               ),
 
               const SizedBox(height: 10),
@@ -202,7 +216,12 @@ class AccueilEcran extends StatelessWidget {
               ElementMenu(
                 icone: Icons.payments_outlined,
                 titre: "Mes reçus de paiement",
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const RecusPaiementEcran()),
+                  );
+                },
               ),
 
               const SizedBox(height: 10),
@@ -210,7 +229,12 @@ class AccueilEcran extends StatelessWidget {
               ElementMenu(
                 icone: Icons.settings_outlined,
                 titre: "Paramètres",
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ParametresEcran()),
+                  );
+                },
               ),
             ],
           ),
