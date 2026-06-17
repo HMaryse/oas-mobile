@@ -35,23 +35,7 @@ class DetailVehiculeEcran extends StatelessWidget {
           ),
         ),
 
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.edit_outlined,
-              color: CouleursApp.orange,
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) =>
-                      const ModifierVehiculeEcran(),
-                ),
-              );
-            },
-          ),
-        ],
+        actions: const []
       ),
 
       body: SingleChildScrollView(
@@ -214,7 +198,7 @@ class DetailVehiculeEcran extends StatelessWidget {
                     ),
 
                     label: const Text(
-                      "Modifier",
+                      "Information",
                     ),
 
                     style:
@@ -226,13 +210,6 @@ class DetailVehiculeEcran extends StatelessWidget {
                     ),
 
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              const ModifierVehiculeEcran(),
-                        ),
-                      );
                     },
                   ),
                 ),

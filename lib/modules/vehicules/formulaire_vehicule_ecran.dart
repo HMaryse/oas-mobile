@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/couleurs_app.dart';
 import '../../core/widgets/bouton_principal.dart';
+import '../vehicules/models/vehicule_model.dart';
+import 'repository/vehicule_repository.dart';
 
 class FormulaireVehiculeEcran extends StatefulWidget {
   final bool modeModification;
+  final VehiculeModel? vehicule;
+  
 
   const FormulaireVehiculeEcran({
     super.key,
     this.modeModification = false,
+    this.vehicule,
   });
 
   @override
@@ -29,6 +34,10 @@ class _FormulaireVehiculeEcranState
 
   String? marqueSelectionnee;
   String? anneeSelectionnee;
+  final VehiculeRepository repository =
+    VehiculeRepository();
+
+bool chargement = false;
 
   final List<String> marques = [
     "Toyota",
@@ -46,19 +55,84 @@ class _FormulaireVehiculeEcranState
     (index) => (2025 - index).toString(),
   );
 
-  void enregistrerVehicule() {
+  Future<void> enregistrerVehicule() async {
+
+  if (marqueSelectionnee == null ||
+      anneeSelectionnee == null ||
+      modeleController.text.isEmpty ||
+      immatriculationController.text.isEmpty ||
+      kilometrageController.text.isEmpty ||
+      numeroChassisController.text.isEmpty) {
+
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text(
-          widget.modeModification
-              ? "Véhicule modifié avec succès"
-              : "Véhicule ajouté avec succès",
+          "Veuillez remplir tous les champs",
+        ),
+      ),
+    );
+    return;
+  }
+
+  try {
+
+    setState(() {
+      chargement = true;
+    });
+
+    await repository.ajouterVehicule(
+      immatriculation:
+          immatriculationController.text.trim(),
+
+      annee:
+          int.parse(anneeSelectionnee!),
+
+      modele:
+          modeleController.text.trim(),
+
+      marque:
+          marqueSelectionnee!,
+
+      kilometrage:
+          double.parse(
+        kilometrageController.text.trim(),
+      ),
+
+      numeroChassis:
+          numeroChassisController.text.trim(),
+    );
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          "Véhicule ajouté avec succès",
         ),
       ),
     );
 
-    Navigator.pop(context);
+    Navigator.pop(context, true);
+
+  } catch (e) {
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          "Erreur : $e",
+        ),
+      ),
+    );
+
+  } finally {
+
+    if (mounted) {
+      setState(() {
+        chargement = false;
+      });
+    }
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -324,14 +398,16 @@ class _FormulaireVehiculeEcranState
 
             const SizedBox(height: 30),
 
-            BoutonPrincipal(
-              texte: widget.modeModification
-                  ? "Mettre à jour"
-                  : "Enregistrer",
-
-              onPressed:
-                  enregistrerVehicule,
-            ),
+            chargement
+              ? const Center(
+                  child:
+                      CircularProgressIndicator(),
+                )
+              : BoutonPrincipal(
+                  texte: "Enregistrer",
+                  onPressed:
+                      enregistrerVehicule,
+                ),
 
             const SizedBox(height: 12),
 

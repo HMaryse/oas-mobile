@@ -4,145 +4,276 @@ import '../../core/theme/couleurs_app.dart';
 import '../../core/widgets/bouton_action_rapide.dart';
 import '../../core/widgets/carte_statistique.dart';
 import '../../core/widgets/element_menu.dart';
-import '../rendez_vous/reservation_rendez_vous_ecran.dart';
-import '../vehicules/formulaire_vehicule_ecran.dart';
-import '../reparations/reparation_ecran.dart';
+import '../client/models/client_model.dart';
+import '../client/repository/client_repository.dart';
 import '../factures/facture_ecran.dart';
 import '../paiements/recus_paiement_ecran.dart';
 import '../parametres/parametres_ecran.dart';
+import '../rendez_vous/reservation_rendez_vous_ecran.dart';
+import '../reparations/reparation_ecran.dart';
+import '../vehicules/formulaire_vehicule_ecran.dart';
 
-class AccueilEcran extends StatelessWidget {
+class AccueilEcran extends StatefulWidget {
   const AccueilEcran({super.key});
 
   @override
+  State<AccueilEcran> createState() =>
+      _AccueilEcranState();
+}
+
+class _AccueilEcranState
+    extends State<AccueilEcran> {
+
+  final ClientRepository clientRepository =
+      ClientRepository();
+
+  ClientModel? client;
+
+  bool chargement = true;
+
+  @override
+  void initState() {
+    super.initState();
+    chargerProfil();
+  }
+
+  Future<void> chargerProfil() async {
+    try {
+      final resultat =
+          await clientRepository.getProfil();
+
+      setState(() {
+        client = resultat;
+        chargement = false;
+      });
+    } catch (e) {
+      setState(() {
+        chargement = false;
+      });
+
+      debugPrint(
+        "Erreur chargement profil : $e",
+      );
+    }
+  }
+
+  String getInitiales() {
+    if (client == null) return "";
+
+    final prenom =
+        client!.firstName.isNotEmpty
+            ? client!.firstName[0]
+            : "";
+
+    final nom =
+        client!.lastName.isNotEmpty
+            ? client!.lastName[0]
+            : "";
+
+    return "$prenom$nom".toUpperCase();
+  }
+
+  @override
   Widget build(BuildContext context) {
+
+    if (chargement) {
+      return const Scaffold(
+        body: Center(
+          child:
+              CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return Scaffold(
-      backgroundColor: CouleursApp.grisFond,
+      backgroundColor:
+          CouleursApp.grisFond,
 
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+        child: RefreshIndicator(
+          onRefresh: chargerProfil,
 
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: SingleChildScrollView(
+            physics:
+                const AlwaysScrollableScrollPhysics(),
 
-            children: [
-              // HEADER
+            padding:
+                const EdgeInsets.all(16),
 
-              Container(
-                padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
 
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
+              children: [
+
+                Container(
+                  padding:
+                      const EdgeInsets.all(16),
+
+                  decoration:
+                      BoxDecoration(
+                    color: Colors.white,
+                    borderRadius:
+                        BorderRadius
+                            .circular(16),
+                  ),
+
+                  child: Row(
+                    children: [
+
+                      CircleAvatar(
+                        radius: 25,
+                        backgroundColor:
+                            const Color(
+                          0xFF173B6D,
+                        ),
+
+                        child: Text(
+                          getInitiales(),
+
+                          style:
+                              const TextStyle(
+                            color:
+                                Colors.white,
+                            fontWeight:
+                                FontWeight.bold,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(
+                        width: 12,
+                      ),
+
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment:
+                              CrossAxisAlignment
+                                  .start,
+
+                          children: [
+
+                            Text(
+                              "${client?.firstName ?? ''} ${client?.lastName ?? ''}",
+
+                              style:
+                                  const TextStyle(
+                                fontWeight:
+                                    FontWeight
+                                        .bold,
+                              ),
+                            ),
+
+                            const SizedBox(
+                              height: 4,
+                            ),
+
+                            Text(
+                              client?.phone ??
+                                  "",
+
+                              style:
+                                  const TextStyle(
+                                color:
+                                    Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      Container(
+                        padding:
+                            const EdgeInsets
+                                .symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+
+                        decoration:
+                            BoxDecoration(
+                          color: Colors
+                              .orange
+                              .shade100,
+
+                          borderRadius:
+                              BorderRadius
+                                  .circular(
+                                      20),
+                        ),
+
+                        child: Text(
+                          client?.matricule ??
+                              "",
+
+                          style:
+                              const TextStyle(
+                            color:
+                                Colors.orange,
+                            fontWeight:
+                                FontWeight
+                                    .bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
 
-                child: Row(
+                const SizedBox(
+                  height: 20,
+                ),
+
+                Row(
                   children: [
-                    const CircleAvatar(
-                      radius: 25,
-                      backgroundColor: Color(0xFF173B6D),
 
-                      child: Text(
-                        "HM",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                    CarteStatistique(
+                      icone:
+                          Icons.calendar_today,
+                      valeur: "0",
+                      titre:
+                          "RDV actifs",
                     ),
 
-                    const SizedBox(width: 12),
-
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start,
-
-                        children: [
-                          Text(
-                            "Hilly OKANA",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-
-                          SizedBox(height: 4),
-
-                          Text(
-                            "+221 77 123 45 67",
-                            style: TextStyle(
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
+                    const SizedBox(
+                      width: 10,
                     ),
 
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
+                    CarteStatistique(
+                      icone:
+                          Icons.handyman,
+                      valeur: "0",
+                      titre:
+                          "En réparation",
+                    ),
 
-                      decoration: BoxDecoration(
-                        color: Colors.orange.shade100,
-                        borderRadius:
-                            BorderRadius.circular(20),
-                      ),
+                    const SizedBox(
+                      width: 10,
+                    ),
 
-                      child: const Text(
-                        "CLT-00042",
-                        style: TextStyle(
-                          color: Colors.orange,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                    CarteStatistique(
+                      icone:
+                          Icons.receipt,
+                      valeur: "0",
+                      titre: "Solde",
                     ),
                   ],
                 ),
-              ),
 
-              const SizedBox(height: 20),
+                const SizedBox(
+                  height: 20,
+                ),
 
-              // STATISTIQUES
-
-             Row(
-                children:  [
-                  CarteStatistique(
-                    icone: Icons.calendar_today,
-                    valeur: "2",
-                    titre: "RDV actifs",
-                  ),
-
-                  SizedBox(width: 10),
-
-                  CarteStatistique(
-                    icone: Icons.handyman,
-                    valeur: "1",
-                    titre: "En réparation",
-                  ),
-
-                  SizedBox(width: 10),
-
-                  CarteStatistique(
-                    icone: Icons.receipt,
-                    valeur: "500k",
-                    titre: "Solde",
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // ACTIONS RAPIDES
-
-              Row(
+                Row(
                   children: [
 
                     BoutonActionRapide(
-                      texte: "Nouveau RDV",
-                      icone: Icons.add,
-                      couleur: Colors.orange,
+                      texte:
+                          "Nouveau RDV",
+                      icone:
+                          Icons.add,
+                      couleur:
+                          Colors.orange,
 
                       onTap: () {
                         Navigator.push(
@@ -155,12 +286,19 @@ class AccueilEcran extends StatelessWidget {
                       },
                     ),
 
-                    const SizedBox(width: 12),
+                    const SizedBox(
+                      width: 12,
+                    ),
 
                     BoutonActionRapide(
-                      texte: "Ajouter véhicule",
-                      icone: Icons.directions_car,
-                      couleur: const Color(0xFF173B6D),
+                      texte:
+                          "Ajouter véhicule",
+                      icone: Icons
+                          .directions_car,
+                      couleur:
+                          const Color(
+                        0xFF173B6D,
+                      ),
 
                       onTap: () {
                         Navigator.push(
@@ -175,68 +313,108 @@ class AccueilEcran extends StatelessWidget {
                   ],
                 ),
 
-              const SizedBox(height: 24),
-
-              const Text(
-                "ACTIONS RAPIDES",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey,
+                const SizedBox(
+                  height: 24,
                 ),
-              ),
 
-              const SizedBox(height: 12),
+                const Text(
+                  "ACTIONS RAPIDES",
 
-              ElementMenu(
-                icone: Icons.build_outlined,
-                titre: "Consulter mes réparations",
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const ReparationsEcran()),
-                  );
-                },
-              ),
+                  style: TextStyle(
+                    fontWeight:
+                        FontWeight.bold,
+                    color: Colors.grey,
+                  ),
+                ),
 
-              const SizedBox(height: 10),
+                const SizedBox(
+                  height: 12,
+                ),
 
-              ElementMenu(
-                icone: Icons.receipt_long_outlined,
-                titre: "Mes factures",
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const FacturesEcran()),
-                  );
-                },
-              ),
+                ElementMenu(
+                  icone:
+                      Icons.build_outlined,
+                  titre:
+                      "Consulter mes réparations",
 
-              const SizedBox(height: 10),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            const ReparationsEcran(),
+                      ),
+                    );
+                  },
+                ),
 
-              ElementMenu(
-                icone: Icons.payments_outlined,
-                titre: "Mes reçus de paiement",
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const RecusPaiementEcran()),
-                  );
-                },
-              ),
+                const SizedBox(
+                  height: 10,
+                ),
 
-              const SizedBox(height: 10),
+                ElementMenu(
+                  icone: Icons
+                      .receipt_long_outlined,
 
-              ElementMenu(
-                icone: Icons.settings_outlined,
-                titre: "Paramètres",
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const ParametresEcran()),
-                  );
-                },
-              ),
-            ],
+                  titre:
+                      "Mes factures",
+
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            const FacturesEcran(),
+                      ),
+                    );
+                  },
+                ),
+
+                const SizedBox(
+                  height: 10,
+                ),
+
+                ElementMenu(
+                  icone:
+                      Icons.payments_outlined,
+
+                  titre:
+                      "Mes reçus de paiement",
+
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            const RecusPaiementEcran(),
+                      ),
+                    );
+                  },
+                ),
+
+                const SizedBox(
+                  height: 10,
+                ),
+
+                ElementMenu(
+                  icone:
+                      Icons.settings_outlined,
+
+                  titre:
+                      "Paramètres",
+
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            const ParametresEcran(),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
