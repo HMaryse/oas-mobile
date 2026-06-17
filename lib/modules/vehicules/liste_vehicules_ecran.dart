@@ -231,12 +231,13 @@ class _ListeVehiculesEcranState
                             context,
                             MaterialPageRoute(
                               builder: (_) =>
-                                  const DetailVehiculeEcran(),
+                                  DetailVehiculeEcran(
+                                    vehicule: vehicule,
+                                  ),
                             ),
                           );
                         },
 
-                        onModifier: null,
                       );
                     },
                   ),

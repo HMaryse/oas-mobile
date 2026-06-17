@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/couleurs_app.dart';
-import 'modifier_vehicule_ecran.dart';
+import 'models/vehicule_model.dart';
 
 class DetailVehiculeEcran extends StatelessWidget {
-  const DetailVehiculeEcran({super.key});
+  final VehiculeModel vehicule;
+
+  const DetailVehiculeEcran({
+    super.key,
+    required this.vehicule,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +39,6 @@ class DetailVehiculeEcran extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-
-        actions: const []
       ),
 
       body: SingleChildScrollView(
@@ -60,10 +63,8 @@ class DetailVehiculeEcran extends StatelessWidget {
                     height: 70,
 
                     decoration: BoxDecoration(
-                      color: CouleursApp.orange
-                          .withOpacity(0.1),
-                      borderRadius:
-                          BorderRadius.circular(16),
+                      color: CouleursApp.orange.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16),
                     ),
 
                     child: const Icon(
@@ -75,7 +76,7 @@ class DetailVehiculeEcran extends StatelessWidget {
 
                   const SizedBox(width: 16),
 
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment:
                           CrossAxisAlignment.start,
@@ -83,28 +84,26 @@ class DetailVehiculeEcran extends StatelessWidget {
                       children: [
 
                         Text(
-                          "Toyota Hilux",
-                          style: TextStyle(
+                          "${vehicule.marque} ${vehicule.modele}",
+                          style: const TextStyle(
                             fontSize: 20,
-                            fontWeight:
-                                FontWeight.bold,
-                            color:
-                                CouleursApp.bleuFonce,
+                            fontWeight: FontWeight.bold,
+                            color: CouleursApp.bleuFonce,
                           ),
                         ),
 
-                        SizedBox(height: 6),
+                        const SizedBox(height: 6),
 
                         Text(
-                          "DK-8849-B",
-                          style: TextStyle(
+                          vehicule.immatriculation,
+                          style: const TextStyle(
                             color: Colors.grey,
                           ),
                         ),
 
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
 
-                        Row(
+                        const Row(
                           children: [
 
                             Icon(
@@ -116,7 +115,7 @@ class DetailVehiculeEcran extends StatelessWidget {
                             SizedBox(width: 5),
 
                             Text(
-                              "Véhicule actif",
+                              "Véhicule enregistré",
                               style: TextStyle(
                                 color: Colors.green,
                                 fontWeight:
@@ -137,19 +136,19 @@ class DetailVehiculeEcran extends StatelessWidget {
             _carteInfo(
               Icons.calendar_month,
               "Année",
-              "2022",
+              vehicule.annee.toString(),
             ),
 
             _carteInfo(
               Icons.speed,
               "Kilométrage",
-              "34 000 km",
+              "${vehicule.kilometrage.toInt()} km",
             ),
 
             _carteInfo(
               Icons.qr_code,
               "Numéro de châssis",
-              "AHR1239840294820",
+              vehicule.numeroChassis,
             ),
 
             const SizedBox(height: 25),
@@ -157,7 +156,7 @@ class DetailVehiculeEcran extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                "Historique des réparations",
+                "Informations véhicule",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -168,72 +167,47 @@ class DetailVehiculeEcran extends StatelessWidget {
 
             const SizedBox(height: 12),
 
-            _historique(
-              "Changement plaquettes",
-              "En cours",
-              Colors.orange,
-            ),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
 
-            _historique(
-              "Révision 30 000 km",
-              "Terminé",
-              Colors.green,
-            ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+              ),
 
-            _historique(
-              "Vidange + filtres",
-              "Terminé",
-              Colors.green,
+              child: const Text(
+                "Les informations affichées proviennent directement de votre compte client.",
+              ),
             ),
 
             const SizedBox(height: 30),
 
-            Row(
-              children: [
+            SizedBox(
+              width: double.infinity,
+              height: 55,
 
-                Expanded(
-                  child: ElevatedButton.icon(
-                    icon: const Icon(
-                      Icons.edit_outlined,
-                    ),
-
-                    label: const Text(
-                      "Information",
-                    ),
-
-                    style:
-                        ElevatedButton.styleFrom(
-                      backgroundColor:
-                          CouleursApp.orange,
-                      foregroundColor:
-                          Colors.white,
-                    ),
-
-                    onPressed: () {
-                    },
-                  ),
+              child: ElevatedButton.icon(
+                icon: const Icon(
+                  Icons.arrow_back,
                 ),
 
-                const SizedBox(width: 12),
-
-                Expanded(
-                  child: OutlinedButton.icon(
-                    icon: const Icon(
-                      Icons.delete_outline,
-                      color: Colors.red,
-                    ),
-
-                    label: const Text(
-                      "Supprimer",
-                      style: TextStyle(
-                        color: Colors.red,
-                      ),
-                    ),
-
-                    onPressed: () {},
-                  ),
+                label: const Text(
+                  "Retour",
                 ),
-              ],
+
+                style:
+                    ElevatedButton.styleFrom(
+                  backgroundColor:
+                      CouleursApp.orange,
+                  foregroundColor:
+                      Colors.white,
+                ),
+
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
             ),
           ],
         ),
@@ -241,7 +215,7 @@ class DetailVehiculeEcran extends StatelessWidget {
     );
   }
 
-  Widget _carteInfo(
+  static Widget _carteInfo(
     IconData icone,
     String label,
     String valeur,
@@ -290,63 +264,6 @@ class DetailVehiculeEcran extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _historique(
-    String titre,
-    String statut,
-    Color couleur,
-  ) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(16),
-
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
-
-      child: Row(
-        children: [
-
-          Icon(
-            Icons.build_circle_outlined,
-            color: couleur,
-          ),
-
-          const SizedBox(width: 12),
-
-          Expanded(
-            child: Text(titre),
-          ),
-
-          Container(
-            padding:
-                const EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 5,
-            ),
-
-            decoration: BoxDecoration(
-              color:
-                  couleur.withOpacity(0.15),
-              borderRadius:
-                  BorderRadius.circular(
-                      20),
-            ),
-
-            child: Text(
-              statut,
-              style: TextStyle(
-                color: couleur,
-                fontWeight:
-                    FontWeight.bold,
-              ),
             ),
           ),
         ],

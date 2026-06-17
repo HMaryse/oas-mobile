@@ -7,7 +7,7 @@ class CarteVehicule extends StatelessWidget {
   final String kilometrage;
 
   final VoidCallback? onDetails;
-  final VoidCallback? onModifier;
+ 
 
   const CarteVehicule({
     super.key,
@@ -16,7 +16,7 @@ class CarteVehicule extends StatelessWidget {
     required this.annee,
     required this.kilometrage,
     this.onDetails,
-    this.onModifier,
+
   });
 
   @override
@@ -171,15 +171,6 @@ class CarteVehicule extends StatelessWidget {
 
               const SizedBox(width: 12),
 
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: onModifier,
-
-                  child: const Text(
-                    "Modifier",
-                  ),
-                ),
-              ),
             ],
           ),
         ],
