@@ -2,12 +2,36 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/couleurs_app.dart';
 import '../../core/widgets/bouton_principal.dart';
+import 'models/rendez_vous.dart';
 
 class ConfirmationRendezVousEcran extends StatelessWidget {
-  const ConfirmationRendezVousEcran({super.key});
+  final RendezVous rendezVous;
+
+  const ConfirmationRendezVousEcran({
+    super.key,
+    required this.rendezVous,
+  });
+
+  String libelleStatut() {
+    switch (rendezVous.statut) {
+      case "EN_ATTENTE":
+        return "En attente";
+
+      case "CONFIRME":
+        return "Confirmé";
+
+      case "REFUSE":
+        return "Refusé";
+
+      default:
+        return rendezVous.statut;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final date = rendezVous.dateRendezVous;
+
     return Scaffold(
       backgroundColor: CouleursApp.grisFond,
 
@@ -17,7 +41,6 @@ class ConfirmationRendezVousEcran extends StatelessWidget {
 
           child: Column(
             children: [
-
               const Spacer(),
 
               Container(
@@ -66,35 +89,36 @@ class ConfirmationRendezVousEcran extends StatelessWidget {
                       BorderRadius.circular(16),
                 ),
 
-                child: const Column(
+                child: Column(
                   children: [
-
                     _LigneResume(
                       titre: "Date",
-                      valeur: "15 Juin 2026",
+                      valeur:
+                          "${date.day}/${date.month}/${date.year}",
                     ),
 
-                    Divider(),
+                    const Divider(),
 
                     _LigneResume(
                       titre: "Heure",
-                      valeur: "09:30",
+                      valeur:
+                          "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}",
                     ),
 
-                    Divider(),
+                    const Divider(),
 
                     _LigneResume(
                       titre: "Véhicule",
                       valeur:
-                          "Toyota Hilux",
+                          rendezVous
+                              .vehiculeImmatriculation,
                     ),
 
-                    Divider(),
+                    const Divider(),
 
                     _LigneResume(
                       titre: "Statut",
-                      valeur:
-                          "En attente",
+                      valeur: libelleStatut(),
                     ),
                   ],
                 ),
@@ -125,7 +149,14 @@ class ConfirmationRendezVousEcran extends StatelessWidget {
               BoutonPrincipal(
                 texte:
                     "Retour à l'accueil",
-                onPressed: () {},
+
+                onPressed: () {
+                  Navigator.popUntil(
+                    context,
+                    (route) =>
+                        route.isFirst,
+                  );
+                },
               ),
             ],
           ),
@@ -148,7 +179,6 @@ class _LigneResume extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-
         Expanded(
           child: Text(
             titre,

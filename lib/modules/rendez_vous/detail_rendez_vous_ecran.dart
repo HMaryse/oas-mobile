@@ -1,13 +1,52 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/couleurs_app.dart';
-import 'modifier_rendez_vous_ecran.dart';
+import 'models/rendez_vous.dart';
 
 class DetailRendezVousEcran extends StatelessWidget {
-  const DetailRendezVousEcran({super.key});
+  final RendezVous rendezVous;
+
+  const DetailRendezVousEcran({
+    super.key,
+    required this.rendezVous,
+  });
+
+  Color couleurStatut() {
+    switch (rendezVous.statut) {
+      case "CONFIRME":
+        return Colors.green;
+
+      case "EN_ATTENTE":
+        return Colors.orange;
+
+      case "REFUSE":
+        return Colors.red;
+
+      default:
+        return Colors.grey;
+    }
+  }
+
+  String libelleStatut() {
+    switch (rendezVous.statut) {
+      case "CONFIRME":
+        return "Confirmé";
+
+      case "EN_ATTENTE":
+        return "En attente";
+
+      case "REFUSE":
+        return "Refusé";
+
+      default:
+        return rendezVous.statut;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final date = rendezVous.dateRendezVous;
+
     return Scaffold(
       backgroundColor: CouleursApp.grisFond,
 
@@ -34,24 +73,6 @@ class DetailRendezVousEcran extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.edit_outlined,
-              color: CouleursApp.orange,
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) =>
-                      const ModifierRendezVousEcran(),
-                ),
-              );
-            },
-          ),
-        ],
       ),
 
       body: SingleChildScrollView(
@@ -59,20 +80,17 @@ class DetailRendezVousEcran extends StatelessWidget {
 
         child: Column(
           children: [
-
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(24),
 
               decoration: BoxDecoration(
                 color: CouleursApp.bleuFonce,
-                borderRadius:
-                    BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(20),
               ),
 
               child: Column(
                 children: [
-
                   const Icon(
                     Icons.calendar_month,
                     color: Colors.white,
@@ -81,52 +99,44 @@ class DetailRendezVousEcran extends StatelessWidget {
 
                   const SizedBox(height: 12),
 
-                  const Text(
-                    "15 Juin 2026",
-                    style: TextStyle(
+                  Text(
+                    "${date.day}/${date.month}/${date.year}",
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 28,
-                      fontWeight:
-                          FontWeight.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
 
                   const SizedBox(height: 8),
 
-                  const Text(
-                    "09:30",
-                    style: TextStyle(
+                  Text(
+                    "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}",
+                    style: const TextStyle(
                       color: Colors.orange,
                       fontSize: 22,
-                      fontWeight:
-                          FontWeight.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
 
                   const SizedBox(height: 16),
 
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: 14,
                       vertical: 8,
                     ),
 
                     decoration: BoxDecoration(
-                      color: Colors.green
-                          .withOpacity(0.2),
-
-                      borderRadius:
-                          BorderRadius.circular(
-                              20),
+                      color: couleurStatut().withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(20),
                     ),
 
-                    child: const Text(
-                      "Confirmé",
-                      style: TextStyle(
+                    child: Text(
+                      libelleStatut(),
+                      style: const TextStyle(
                         color: Colors.white,
-                        fontWeight:
-                            FontWeight.bold,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -139,8 +149,7 @@ class DetailRendezVousEcran extends StatelessWidget {
             _blocInfo(
               icon: Icons.build_circle_outlined,
               titre: "Motif",
-              contenu:
-                  "Changement plaquettes de frein",
+              contenu: rendezVous.motif,
             ),
 
             const SizedBox(height: 12),
@@ -150,16 +159,13 @@ class DetailRendezVousEcran extends StatelessWidget {
 
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius:
-                    BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16),
               ),
 
-              child: const Row(
+              child: Row(
                 children: [
-
-                  CircleAvatar(
-                    backgroundColor:
-                        CouleursApp.orange,
+                  const CircleAvatar(
+                    backgroundColor: CouleursApp.orange,
 
                     child: Icon(
                       Icons.directions_car,
@@ -167,7 +173,7 @@ class DetailRendezVousEcran extends StatelessWidget {
                     ),
                   ),
 
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
 
                   Expanded(
                     child: Column(
@@ -175,22 +181,20 @@ class DetailRendezVousEcran extends StatelessWidget {
                           CrossAxisAlignment.start,
 
                       children: [
-
-                        Text(
-                          "Toyota Hilux",
+                        const Text(
+                          "Véhicule",
                           style: TextStyle(
-                            fontWeight:
-                                FontWeight.bold,
-                            fontSize: 16,
+                            color: Colors.grey,
                           ),
                         ),
 
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
 
                         Text(
-                          "DK-8849-B",
-                          style: TextStyle(
-                            color: Colors.grey,
+                          rendezVous.vehiculeImmatriculation,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
                           ),
                         ),
                       ],
@@ -204,10 +208,10 @@ class DetailRendezVousEcran extends StatelessWidget {
 
             _blocInfo(
               icon: Icons.info_outline,
-              titre:
-                  "Commentaire de l'atelier",
+              titre: "Commentaire",
               contenu:
-                  "Prévoir environ 1 heure pour l'intervention. Merci d'arriver 10 minutes avant l'heure prévue.",
+                  rendezVous.commentaire ??
+                  "Aucun commentaire disponible",
             ),
 
             const SizedBox(height: 30),
@@ -226,70 +230,23 @@ class DetailRendezVousEcran extends StatelessWidget {
                   "Annuler ce rendez-vous",
                   style: TextStyle(
                     color: Colors.red,
-                    fontWeight:
-                        FontWeight.w600,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
 
-                style:
-                    OutlinedButton.styleFrom(
+                style: OutlinedButton.styleFrom(
                   side: const BorderSide(
                     color: Colors.red,
                   ),
                 ),
 
                 onPressed: () {
-                  showDialog(
-                    context: context,
-
-                    builder: (_) =>
-                        AlertDialog(
-                      title: const Text(
-                        "Annuler le rendez-vous ?",
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        "Fonction d'annulation à connecter au backend",
                       ),
-
-                      content: const Text(
-                        "Cette action ne pourra pas être annulée.",
-                      ),
-
-                      actions: [
-
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(
-                                context);
-                          },
-                          child:
-                              const Text("Non"),
-                        ),
-
-                        ElevatedButton(
-                          style:
-                              ElevatedButton
-                                  .styleFrom(
-                            backgroundColor:
-                                Colors.red,
-                          ),
-
-                          onPressed: () {
-                            Navigator.pop(
-                                context);
-
-                            ScaffoldMessenger.of(
-                                    context)
-                                .showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  "Rendez-vous annulé",
-                                ),
-                              ),
-                            );
-                          },
-
-                          child:
-                              const Text("Oui"),
-                        ),
-                      ],
                     ),
                   );
                 },
@@ -308,21 +265,17 @@ class DetailRendezVousEcran extends StatelessWidget {
   }) {
     return Container(
       width: double.infinity,
-
       padding: const EdgeInsets.all(16),
 
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius:
-            BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16),
       ),
 
       child: Row(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
 
         children: [
-
           Icon(
             icon,
             color: CouleursApp.orange,
@@ -336,13 +289,11 @@ class DetailRendezVousEcran extends StatelessWidget {
                   CrossAxisAlignment.start,
 
               children: [
-
                 Text(
                   titre,
                   style: const TextStyle(
                     color: Colors.grey,
-                    fontWeight:
-                        FontWeight.bold,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
 

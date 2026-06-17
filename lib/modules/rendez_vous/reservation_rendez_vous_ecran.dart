@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/couleurs_app.dart';
 import '../../core/widgets/bouton_principal.dart';
+import '../vehicules/models/vehicule_model.dart';
+import '../vehicules/repository/vehicule_repository.dart';
 import 'confirmation_rendez_vous_ecran.dart';
+import 'repository/rendez_vous_repository.dart';
 
 class ReservationRendezVousEcran extends StatefulWidget {
-  final bool modeModification;
-
   const ReservationRendezVousEcran({
     super.key,
-    this.modeModification = false,
   });
 
   @override
@@ -19,18 +19,26 @@ class ReservationRendezVousEcran extends StatefulWidget {
 
 class _ReservationRendezVousEcranState
     extends State<ReservationRendezVousEcran> {
-  String? vehiculeSelectionne;
 
-  final motifController = TextEditingController();
+  final RendezVousRepository rendezVousRepository =
+      RendezVousRepository();
 
-  final List<String> vehicules = [
-    "Toyota Hilux (DK-8849-B)",
-    "Renault Clio IV (DK-2208-CD)",
-  ];
+  final VehiculeRepository vehiculeRepository =
+      VehiculeRepository();
+
+  final motifController =
+      TextEditingController();
+
+  List<VehiculeModel> vehicules = [];
+
+  VehiculeModel? vehiculeSelectionne;
+
+  bool chargement = true;
 
   DateTime dateChoisie = DateTime.now();
 
-  TimeOfDay heureChoisie = const TimeOfDay(
+  TimeOfDay heureChoisie =
+      const TimeOfDay(
     hour: 9,
     minute: 30,
   );
@@ -38,13 +46,104 @@ class _ReservationRendezVousEcranState
   @override
   void initState() {
     super.initState();
+    chargerVehicules();
+  }
 
-    if (widget.modeModification) {
-      vehiculeSelectionne =
-          "Toyota Hilux (DK-8849-B)";
+  Future<void> chargerVehicules() async {
+    try {
 
-      motifController.text =
-          "Changement plaquettes de frein";
+      final resultat =
+          await vehiculeRepository
+              .getVehicules();
+
+      setState(() {
+        vehicules = resultat;
+
+        if (vehicules.isNotEmpty) {
+          vehiculeSelectionne =
+              vehicules.first;
+        }
+
+        chargement = false;
+      });
+
+    } catch (e) {
+
+      setState(() {
+        chargement = false;
+      });
+
+      debugPrint(
+        "Erreur véhicules : $e",
+      );
+    }
+  }
+
+  Future<void> reserver() async {
+
+    if (vehiculeSelectionne == null) {
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Veuillez sélectionner un véhicule",
+          ),
+        ),
+      );
+
+      return;
+    }
+
+    if (motifController.text.trim().isEmpty) {
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Veuillez saisir un motif",
+          ),
+        ),
+      );
+
+      return;
+    }
+
+    try {
+
+      final dateRendezVous =
+          DateTime(
+        dateChoisie.year,
+        dateChoisie.month,
+        dateChoisie.day,
+        heureChoisie.hour,
+        heureChoisie.minute,
+      );
+
+      await rendezVousRepository
+          .creerRendezVous(
+        dateRendezVous:
+            dateRendezVous,
+        motif:
+            motifController.text.trim(),
+        vehiculeId:
+            vehiculeSelectionne!.id,
+      );
+
+      if (!mounted) return;
+
+      Navigator.pop(context, true);
+
+    } catch (e) {
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
+        SnackBar(
+          content: Text(
+            "Erreur : $e",
+          ),
+        ),
+      );
     }
   }
 
@@ -56,17 +155,30 @@ class _ReservationRendezVousEcranState
 
   @override
   Widget build(BuildContext context) {
+
+    if (chargement) {
+      return const Scaffold(
+        body: Center(
+          child:
+              CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return Scaffold(
-      backgroundColor: CouleursApp.grisFond,
+      backgroundColor:
+          CouleursApp.grisFond,
 
       appBar: AppBar(
-        backgroundColor: CouleursApp.grisFond,
+        backgroundColor:
+            CouleursApp.grisFond,
         elevation: 0,
 
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios_new,
-            color: CouleursApp.orange,
+            color:
+                CouleursApp.orange,
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -75,81 +187,103 @@ class _ReservationRendezVousEcranState
 
         centerTitle: true,
 
-        title: Text(
-          widget.modeModification
-              ? "Modifier Rendez-vous"
-              : "Nouveau Rendez-vous",
-          style: const TextStyle(
-            color: CouleursApp.bleuFonce,
-            fontWeight: FontWeight.bold,
+        title: const Text(
+          "Nouveau Rendez-vous",
+          style: TextStyle(
+            color:
+                CouleursApp.bleuFonce,
+            fontWeight:
+                FontWeight.bold,
           ),
         ),
       ),
 
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding:
+            const EdgeInsets.all(16),
 
         child: Column(
           crossAxisAlignment:
               CrossAxisAlignment.start,
 
           children: [
+
             Container(
-              padding: const EdgeInsets.all(16),
+              padding:
+                  const EdgeInsets.all(
+                      16),
 
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius:
-                    BorderRadius.circular(18),
+                    BorderRadius.circular(
+                        18),
               ),
 
               child: Row(
                 children: [
+
                   Container(
                     padding:
-                        const EdgeInsets.all(12),
+                        const EdgeInsets
+                            .all(12),
 
-                    decoration: BoxDecoration(
-                      color: CouleursApp.orange
-                          .withOpacity(0.1),
+                    decoration:
+                        BoxDecoration(
+                      color:
+                          CouleursApp
+                              .orange
+                              .withOpacity(
+                                  0.1),
+
                       borderRadius:
-                          BorderRadius.circular(
-                              12),
+                          BorderRadius
+                              .circular(
+                                  12),
                     ),
 
                     child: const Icon(
                       Icons.calendar_month,
-                      color: CouleursApp.orange,
+                      color:
+                          CouleursApp
+                              .orange,
                     ),
                   ),
 
-                  const SizedBox(width: 12),
+                  const SizedBox(
+                    width: 12,
+                  ),
 
-                  Expanded(
+                  const Expanded(
                     child: Column(
                       crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                          CrossAxisAlignment
+                              .start,
 
                       children: [
+
                         Text(
-                          widget.modeModification
-                              ? "Modification du rendez-vous"
-                              : "Nouvelle demande",
+                          "Nouvelle demande",
                           style:
-                              const TextStyle(
+                              TextStyle(
                             fontWeight:
-                                FontWeight.bold,
-                            fontSize: 16,
+                                FontWeight
+                                    .bold,
+                            fontSize:
+                                16,
                           ),
                         ),
 
-                        const SizedBox(
+                        SizedBox(
                             height: 4),
 
-                        const Text(
+                        Text(
                           "Choisissez un véhicule, une date et un motif.",
-                          style: TextStyle(
-                            color: Colors.grey,
+                          style:
+                              TextStyle(
+                            color:
+                                Colors
+                                    .grey,
                           ),
                         ),
                       ],
@@ -159,32 +293,42 @@ class _ReservationRendezVousEcranState
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(
+                height: 24),
 
             const Text(
               "Véhicule",
               style: TextStyle(
-                fontWeight: FontWeight.w600,
+                fontWeight:
+                    FontWeight.w600,
               ),
             ),
 
             const SizedBox(height: 8),
 
-            DropdownButtonFormField<String>(
-              value: vehiculeSelectionne,
+            DropdownButtonFormField<
+                VehiculeModel>(
+              value:
+                  vehiculeSelectionne,
 
-              decoration: _decoration(),
+              decoration:
+                  _decoration(),
 
-              items: vehicules
-                  .map(
-                    (v) => DropdownMenuItem(
-                      value: v,
-                      child: Text(v),
+              items: vehicules.map(
+                (vehicule) {
+
+                  return DropdownMenuItem(
+                    value: vehicule,
+
+                    child: Text(
+                      "${vehicule.marque} ${vehicule.modele} (${vehicule.immatriculation})",
                     ),
-                  )
-                  .toList(),
+                  );
+                },
+              ).toList(),
 
               onChanged: (value) {
+
                 setState(() {
                   vehiculeSelectionne =
                       value;
@@ -196,35 +340,46 @@ class _ReservationRendezVousEcranState
 
             Row(
               children: [
+
                 Expanded(
                   child: InkWell(
                     onTap: () async {
+
                       final date =
                           await showDatePicker(
-                        context: context,
+                        context:
+                            context,
+
                         initialDate:
                             dateChoisie,
+
                         firstDate:
                             DateTime.now(),
+
                         lastDate:
-                            DateTime(2030),
+                            DateTime(
+                                2030),
                       );
 
                       if (date != null) {
+
                         setState(() {
-                          dateChoisie = date;
+                          dateChoisie =
+                              date;
                         });
                       }
                     },
 
                     child: Container(
                       padding:
-                          const EdgeInsets.all(
-                              16),
+                          const EdgeInsets
+                              .all(16),
 
                       decoration:
                           BoxDecoration(
-                        color: Colors.white,
+                        color:
+                            Colors.white,
+
                         borderRadius:
                             BorderRadius
                                 .circular(
@@ -233,6 +388,7 @@ class _ReservationRendezVousEcranState
 
                       child: Row(
                         children: [
+
                           const Icon(
                             Icons
                                 .calendar_today,
@@ -256,19 +412,23 @@ class _ReservationRendezVousEcranState
                   ),
                 ),
 
-                const SizedBox(width: 12),
+                const SizedBox(
+                    width: 12),
 
                 Expanded(
                   child: InkWell(
                     onTap: () async {
+
                       final heure =
                           await showTimePicker(
-                        context: context,
+                        context:
+                            context,
                         initialTime:
                             heureChoisie,
                       );
 
                       if (heure != null) {
+
                         setState(() {
                           heureChoisie =
                               heure;
@@ -278,12 +438,14 @@ class _ReservationRendezVousEcranState
 
                     child: Container(
                       padding:
-                          const EdgeInsets.all(
-                              16),
+                          const EdgeInsets
+                              .all(16),
 
                       decoration:
                           BoxDecoration(
-                        color: Colors.white,
+                        color:
+                            Colors.white,
+
                         borderRadius:
                             BorderRadius
                                 .circular(
@@ -292,8 +454,10 @@ class _ReservationRendezVousEcranState
 
                       child: Row(
                         children: [
+
                           const Icon(
-                            Icons.access_time,
+                            Icons
+                                .access_time,
                             color:
                                 CouleursApp
                                     .orange,
@@ -323,17 +487,20 @@ class _ReservationRendezVousEcranState
             const Text(
               "Motif de la visite",
               style: TextStyle(
-                fontWeight: FontWeight.w600,
+                fontWeight:
+                    FontWeight.w600,
               ),
             ),
 
             const SizedBox(height: 8),
 
             TextFormField(
-              controller: motifController,
+              controller:
+                  motifController,
               maxLines: 5,
 
-              decoration: _decoration(
+              decoration:
+                  _decoration(
                 hint:
                     "Décrivez le motif de votre visite",
               ),
@@ -343,21 +510,26 @@ class _ReservationRendezVousEcranState
 
             Container(
               padding:
-                  const EdgeInsets.all(16),
+                  const EdgeInsets.all(
+                      16),
 
               decoration: BoxDecoration(
                 color:
-                    Colors.green.shade50,
+                    Colors.green
+                        .shade50,
+
                 borderRadius:
-                    BorderRadius.circular(
-                        14),
+                    BorderRadius
+                        .circular(14),
               ),
 
               child: const Row(
                 children: [
+
                   Icon(
                     Icons.info_outline,
-                    color: Colors.green,
+                    color:
+                        Colors.green,
                   ),
 
                   SizedBox(width: 10),
@@ -374,34 +546,8 @@ class _ReservationRendezVousEcranState
             const SizedBox(height: 30),
 
             BoutonPrincipal(
-              texte: widget.modeModification
-                  ? "Mettre à jour"
-                  : "Réserver",
-
-              onPressed: () {
-                if (widget
-                    .modeModification) {
-                  ScaffoldMessenger.of(
-                          context)
-                      .showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        "Rendez-vous modifié avec succès",
-                      ),
-                    ),
-                  );
-
-                  Navigator.pop(context);
-                } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) =>
-                          const ConfirmationRendezVousEcran(),
-                    ),
-                  );
-                }
-              },
+              texte: "Réserver",
+              onPressed: reserver,
             ),
 
             const SizedBox(height: 12),
@@ -438,7 +584,8 @@ class _ReservationRendezVousEcranState
       border: OutlineInputBorder(
         borderRadius:
             BorderRadius.circular(14),
-        borderSide: BorderSide.none,
+        borderSide:
+            BorderSide.none,
       ),
 
       enabledBorder:
@@ -447,7 +594,8 @@ class _ReservationRendezVousEcranState
             BorderRadius.circular(14),
         borderSide:
             const BorderSide(
-          color: Color(0xFFE5E7EB),
+          color:
+              Color(0xFFE5E7EB),
         ),
       ),
 
@@ -455,9 +603,11 @@ class _ReservationRendezVousEcranState
           OutlineInputBorder(
         borderRadius:
             BorderRadius.circular(14),
+
         borderSide:
             const BorderSide(
-          color: CouleursApp.orange,
+          color:
+              CouleursApp.orange,
           width: 2,
         ),
       ),

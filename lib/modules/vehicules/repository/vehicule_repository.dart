@@ -55,12 +55,12 @@ class VehiculeRepository {
     if (response.statusCode != 200 &&
     response.statusCode != 201) {
 
-  print("STATUS = ${response.statusCode}");
-  print("BODY = ${response.body}");
+      print("STATUS = ${response.statusCode}");
+      print("BODY = ${response.body}");
 
-  throw Exception(
-    "Status: ${response.statusCode} - ${response.body}",
-  );
-}
+      throw Exception(
+        "Status: ${response.statusCode} - ${response.body}",
+      );
+    }
   }
 }

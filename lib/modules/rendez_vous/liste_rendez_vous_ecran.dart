@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../core/theme/couleurs_app.dart';
 import '../../core/widgets/carte_rendez_vous.dart';
 import 'detail_rendez_vous_ecran.dart';
+import 'models/rendez_vous.dart';
+import 'repository/rendez_vous_repository.dart';
 import 'reservation_rendez_vous_ecran.dart';
 
 class ListeRendezVousEcran extends StatefulWidget {
@@ -15,6 +17,14 @@ class ListeRendezVousEcran extends StatefulWidget {
 
 class _ListeRendezVousEcranState
     extends State<ListeRendezVousEcran> {
+
+  final RendezVousRepository repository =
+      RendezVousRepository();
+
+  List<RendezVous> rendezVous = [];
+
+  bool chargement = true;
+
   int filtreSelectionne = 0;
 
   final List<String> filtres = [
@@ -25,18 +35,116 @@ class _ListeRendezVousEcranState
   ];
 
   @override
+  void initState() {
+    super.initState();
+    chargerRendezVous();
+  }
+
+  Future<void> chargerRendezVous() async {
+    try {
+
+      final resultat =
+          await repository.getRendezVous();
+
+      setState(() {
+        rendezVous = resultat;
+        chargement = false;
+      });
+
+    } catch (e) {
+
+      setState(() {
+        chargement = false;
+      });
+
+      debugPrint(
+        "Erreur rendez-vous : $e",
+      );
+    }
+  }
+
+  List<RendezVous> get rendezVousFiltres {
+
+    switch (filtreSelectionne) {
+
+      case 1:
+        return rendezVous
+            .where(
+              (e) =>
+                  e.statut ==
+                  "EN_ATTENTE",
+            )
+            .toList();
+
+      case 2:
+        return rendezVous
+            .where(
+              (e) =>
+                  e.statut ==
+                  "CONFIRME",
+            )
+            .toList();
+
+      case 3:
+        return rendezVous
+            .where(
+              (e) =>
+                  e.statut ==
+                  "REFUSE",
+            )
+            .toList();
+
+      default:
+        return rendezVous;
+    }
+  }
+
+  String libelleStatut(
+    String statut,
+  ) {
+
+    switch (statut) {
+
+      case "EN_ATTENTE":
+        return "En attente";
+
+      case "CONFIRME":
+        return "Confirmé";
+
+      case "REFUSE":
+        return "Refusé";
+
+      default:
+        return statut;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+
+    if (chargement) {
+      return const Scaffold(
+        body: Center(
+          child:
+              CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return Scaffold(
-      backgroundColor: CouleursApp.grisFond,
+      backgroundColor:
+          CouleursApp.grisFond,
 
       appBar: AppBar(
-        backgroundColor: CouleursApp.grisFond,
+        backgroundColor:
+            CouleursApp.grisFond,
         elevation: 0,
 
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios_new,
-            color: CouleursApp.orange,
+            color:
+                CouleursApp.orange,
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -48,8 +156,10 @@ class _ListeRendezVousEcranState
         title: const Text(
           "Mes Rendez-vous",
           style: TextStyle(
-            color: CouleursApp.bleuFonce,
-            fontWeight: FontWeight.bold,
+            color:
+                CouleursApp.bleuFonce,
+            fontWeight:
+                FontWeight.bold,
           ),
         ),
 
@@ -57,223 +167,255 @@ class _ListeRendezVousEcranState
           IconButton(
             icon: const Icon(
               Icons.add,
-              color: CouleursApp.orange,
+              color:
+                  CouleursApp.orange,
             ),
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async {
+
+              await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) =>
                       const ReservationRendezVousEcran(),
                 ),
               );
+
+              chargerRendezVous();
             },
           ),
         ],
       ),
 
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(16),
+      body: RefreshIndicator(
+        onRefresh:
+            chargerRendezVous,
 
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(18),
+        child: ListView(
+          padding:
+              const EdgeInsets.all(
+                  16),
 
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius:
-                        BorderRadius.circular(18),
-                  ),
+          children: [
 
-                  child: Row(
-                    children: [
-                      Container(
-                        padding:
-                            const EdgeInsets.all(12),
+            Container(
+              padding:
+                  const EdgeInsets.all(
+                      18),
 
-                        decoration: BoxDecoration(
-                          color: CouleursApp.orange
-                              .withOpacity(0.1),
-                          borderRadius:
-                              BorderRadius.circular(
+              decoration:
+                  BoxDecoration(
+                color:
+                    Colors.white,
+                borderRadius:
+                    BorderRadius.circular(
+                        18),
+              ),
+
+              child: Row(
+                children: [
+
+                  Container(
+                    padding:
+                        const EdgeInsets
+                            .all(12),
+
+                    decoration:
+                        BoxDecoration(
+                      color:
+                          CouleursApp
+                              .orange
+                              .withOpacity(
+                                  0.1),
+
+                      borderRadius:
+                          BorderRadius
+                              .circular(
                                   12),
-                        ),
+                    ),
 
-                        child: const Icon(
-                          Icons.calendar_month,
-                          color:
-                              CouleursApp.orange,
-                        ),
-                      ),
-
-                      const SizedBox(width: 12),
-
-                      const Expanded(
-                        child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment
-                                  .start,
-
-                          children: [
-                            Text(
-                              "3 rendez-vous",
-                              style: TextStyle(
-                                fontWeight:
-                                    FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-
-                            SizedBox(height: 4),
-
-                            Text(
-                              "1 confirmé • 1 en attente • 1 refusé",
-                              style: TextStyle(
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                    child: const Icon(
+                      Icons
+                          .calendar_month,
+                      color:
+                          CouleursApp
+                              .orange,
+                    ),
                   ),
-                ),
 
-                const SizedBox(height: 20),
+                  const SizedBox(
+                      width: 12),
 
-                SizedBox(
-                  height: 42,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment:
+                          CrossAxisAlignment
+                              .start,
 
-                  child: ListView.builder(
-                    scrollDirection:
-                        Axis.horizontal,
+                      children: [
 
-                    itemCount: filtres.length,
-
-                    itemBuilder:
-                        (context, index) {
-                      final actif =
-                          filtreSelectionne ==
-                              index;
-
-                      return Padding(
-                        padding:
-                            const EdgeInsets.only(
-                          right: 8,
-                        ),
-
-                        child: ChoiceChip(
-                          label:
-                              Text(filtres[index]),
-
-                          selected: actif,
-
-                          selectedColor:
-                              CouleursApp
-                                  .bleuFonce,
-
-                          labelStyle:
-                              TextStyle(
-                            color: actif
-                                ? Colors.white
-                                : Colors.black,
+                        Text(
+                          "${rendezVous.length} rendez-vous",
+                          style:
+                              const TextStyle(
+                            fontWeight:
+                                FontWeight
+                                    .bold,
+                            fontSize:
+                                18,
                           ),
-
-                          onSelected: (_) {
-                            setState(() {
-                              filtreSelectionne =
-                                  index;
-                            });
-                          },
                         ),
-                      );
-                    },
+
+                        const SizedBox(
+                            height: 4),
+
+                        Text(
+                          "${rendezVous.where((e) => e.statut == 'EN_ATTENTE').length} en attente",
+                          style:
+                              const TextStyle(
+                            color:
+                                Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(
+                height: 20),
+
+            SizedBox(
+              height: 42,
+
+              child:
+                  ListView.builder(
+                scrollDirection:
+                    Axis.horizontal,
+
+                itemCount:
+                    filtres.length,
+
+                itemBuilder:
+                    (context,
+                        index) {
+
+                  final actif =
+                      filtreSelectionne ==
+                          index;
+
+                  return Padding(
+                    padding:
+                        const EdgeInsets
+                            .only(
+                      right: 8,
+                    ),
+
+                    child:
+                        ChoiceChip(
+                      label: Text(
+                        filtres[index],
+                      ),
+
+                      selected:
+                          actif,
+
+                      selectedColor:
+                          CouleursApp
+                              .bleuFonce,
+
+                      labelStyle:
+                          TextStyle(
+                        color: actif
+                            ? Colors
+                                .white
+                            : Colors
+                                .black,
+                      ),
+
+                      onSelected:
+                          (_) {
+
+                        setState(() {
+                          filtreSelectionne =
+                              index;
+                        });
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(
+                height: 20),
+
+            if (rendezVousFiltres
+                .isEmpty)
+
+              const Center(
+                child: Padding(
+                  padding:
+                      EdgeInsets.all(
+                          40),
+                  child: Text(
+                    "Aucun rendez-vous",
                   ),
                 ),
+              ),
 
-                const SizedBox(height: 20),
+            ...rendezVousFiltres.map(
+              (rdv) {
 
-                CarteRendezVous(
-                  date: "15 Juin 2026",
-                  heure: "09:30",
+                final date =
+                    rdv.dateRendezVous;
+
+                return CarteRendezVous(
+                  date:
+                      "${date.day}/${date.month}/${date.year}",
+
+                  heure:
+                      "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}",
+
                   vehicule:
-                      "Toyota Hilux - DK-8849-B",
-                  motif:
-                      "Changement plaquettes de frein",
-                  statut: "Confirmé",
+                      rdv.vehiculeImmatriculation,
 
-                  onDetails: () {
+                  motif:
+                      rdv.motif,
+
+                  statut:
+                      libelleStatut(
+                    rdv.statut,
+                  ),
+
+                  onDetails:
+                      () {
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (_) =>
-                            const DetailRendezVousEcran(),
+                            DetailRendezVousEcran(
+                          rendezVous:
+                              rdv,
+                        ),
                       ),
                     );
                   },
 
-                  onAnnuler: () {
+                  onAnnuler:
+                      () {
+
                     _confirmerAnnulation(
-                        context);
-                  },
-                ),
-
-                CarteRendezVous(
-                  date: "22 Juin 2026",
-                  heure: "14:00",
-                  vehicule:
-                      "Renault Clio IV - DK-2208-CD",
-                  motif:
-                      "Diagnostic bruit moteur",
-                  statut: "En attente",
-
-                  onDetails: () {
-                    Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            const DetailRendezVousEcran(),
-                      ),
                     );
                   },
-
-                  onAnnuler: () {
-                    _confirmerAnnulation(
-                        context);
-                  },
-                ),
-
-                CarteRendezVous(
-                  date: "04 Juillet 2026",
-                  heure: "11:00",
-                  vehicule:
-                      "Toyota Hilux - DK-8849-B",
-                  motif:
-                      "Révision complète",
-                  statut: "Refusé",
-
-                  onDetails: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            const DetailRendezVousEcran(),
-                      ),
-                    );
-                  },
-
-                  onAnnuler: () {
-                    _confirmerAnnulation(
-                        context);
-                  },
-                ),
-              ],
+                );
+              },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
 
       floatingActionButton:
@@ -286,14 +428,17 @@ class _ListeRendezVousEcranState
           color: Colors.white,
         ),
 
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+
+          await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (_) =>
                   const ReservationRendezVousEcran(),
             ),
           );
+
+          chargerRendezVous();
         },
       ),
     );
@@ -301,10 +446,12 @@ class _ListeRendezVousEcranState
 
   void _confirmerAnnulation(
       BuildContext context) {
+
     showDialog(
       context: context,
 
-      builder: (_) => AlertDialog(
+      builder: (_) =>
+          AlertDialog(
         title: const Text(
           "Annuler le rendez-vous ?",
         ),
@@ -314,32 +461,42 @@ class _ListeRendezVousEcranState
         ),
 
         actions: [
+
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(
+                  context);
             },
-            child: const Text("Non"),
+            child:
+                const Text("Non"),
           ),
 
           ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+            style:
+                ElevatedButton
+                    .styleFrom(
+              backgroundColor:
+                  Colors.red,
             ),
 
             onPressed: () {
-              Navigator.pop(context);
 
-              ScaffoldMessenger.of(context)
+              Navigator.pop(
+                  context);
+
+              ScaffoldMessenger.of(
+                      context)
                   .showSnackBar(
                 const SnackBar(
                   content: Text(
-                    "Rendez-vous annulé",
+                    "Fonction d'annulation à connecter",
                   ),
                 ),
               );
             },
 
-            child: const Text("Oui"),
+            child:
+                const Text("Oui"),
           ),
         ],
       ),
