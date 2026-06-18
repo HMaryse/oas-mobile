@@ -199,7 +199,7 @@ class _InscriptionEcranState
               const SizedBox(height: 8),
 
               const Text(
-                "Rejoignez le portail client OAS",
+                "Enregistrez vous pour suivre vos reparations et prendre rendez-vous.",
                 style: TextStyle(
                   color:
                       CouleursApp.grisTexte,
@@ -375,43 +375,6 @@ class _InscriptionEcranState
               ),
 
               const SizedBox(height: 20),
-
-              Container(
-                padding:
-                    const EdgeInsets.all(
-                        16),
-
-                decoration:
-                    BoxDecoration(
-                  color:
-                      Colors.blue.shade50,
-                  borderRadius:
-                      BorderRadius
-                          .circular(12),
-                ),
-
-                child: const Row(
-                  crossAxisAlignment:
-                      CrossAxisAlignment
-                          .start,
-                  children: [
-
-                    Icon(
-                      Icons.info_outline,
-                      color:
-                          Colors.blue,
-                    ),
-
-                    SizedBox(width: 12),
-
-                    Expanded(
-                      child: Text(
-                        "Le matricule client est généré automatiquement par OAS.",
-                      ),
-                    ),
-                  ],
-                ),
-              ),
 
               const SizedBox(height: 24),
 

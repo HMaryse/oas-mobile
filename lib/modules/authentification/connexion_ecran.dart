@@ -88,31 +88,19 @@ class _ConnexionEcranState
 
           child: Column(
             children: [
-              const SizedBox(height: 70),
+              const SizedBox(height: 20),
 
-              Container(
-                height: 90,
-                width: 90,
-
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius:
-                      BorderRadius.circular(20),
-                ),
-
-                child: const Icon(
-                  Icons.directions_car,
-                  size: 50,
-                  color: CouleursApp.orange,
-                ),
-              ),
+              Image.asset(
+              "assets/images/logo_oas.jpg",
+              height: 90,
+            ),
 
               const SizedBox(height: 25),
 
               const Text(
                 "Orient Auto Service",
                 style: TextStyle(
-                  fontSize: 30,
+                  fontSize: 26,
                   fontWeight: FontWeight.bold,
                   color: CouleursApp.bleuFonce,
                 ),
@@ -136,6 +124,7 @@ class _ConnexionEcranState
                       text:
                           ": Prise de rendez-vous et suivi des reparations",
                       style: TextStyle(
+                        fontStyle: FontStyle.italic,
                         color:
                             CouleursApp.grisTexte,
                       ),
@@ -144,7 +133,7 @@ class _ConnexionEcranState
                 ),
               ),
 
-              const SizedBox(height: 50),
+              const SizedBox(height: 35),
 
               const Align(
                 alignment:
@@ -156,26 +145,41 @@ class _ConnexionEcranState
 
               const SizedBox(height: 8),
 
-              TextField(
-                controller:
-                    usernameController,
-
-                decoration: InputDecoration(
-                  hintText: "username",
-
-                  prefixIcon: const Icon(
-                    Icons.person_outline,
-                  ),
-
-                  filled: true,
-                  fillColor: Colors.white,
-
-                  border: OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(
-                            12),
-                    borderSide:
-                        BorderSide.none,
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: usernameController,
+                  decoration: InputDecoration(
+                    hintText: "username",
+                    prefixIcon: const Icon(
+                      Icons.person_outline,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(
+                        color: CouleursApp.orange,
+                        width: 1.5,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -192,62 +196,52 @@ class _ConnexionEcranState
 
               const SizedBox(height: 8),
 
-              TextField(
-                controller:
-                    passwordController,
-
-                obscureText:
-                    masquerMotDePasse,
-
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(
-                    Icons.lock_outline,
-                  ),
-
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        masquerMotDePasse =
-                            !masquerMotDePasse;
-                      });
-                    },
-
-                    icon: Icon(
-                      masquerMotDePasse
-                          ? Icons
-                              .visibility_off_outlined
-                          : Icons
-                              .visibility_outlined,
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
-                  ),
-
-                  filled: true,
-                  fillColor: Colors.white,
-
-                  enabledBorder:
-                      OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(
-                            12),
-
-                    borderSide:
-                        const BorderSide(
-                      color:
-                          CouleursApp.orange,
+                  ],
+                ),
+                child: TextField(
+                  controller: passwordController,
+                  obscureText: masquerMotDePasse,
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(
+                      Icons.lock_outline,
                     ),
-                  ),
-
-                  focusedBorder:
-                      OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(
-                            12),
-
-                    borderSide:
-                        const BorderSide(
-                      color:
-                          CouleursApp.orange,
-                      width: 2,
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          masquerMotDePasse = !masquerMotDePasse;
+                        });
+                      },
+                      icon: Icon(
+                        masquerMotDePasse
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                      ),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(
+                        color: CouleursApp.orange,
+                        width: 1.5,
+                      ),
                     ),
                   ),
                 ),
