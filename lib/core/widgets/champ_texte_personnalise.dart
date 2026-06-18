@@ -35,54 +35,85 @@ class _ChampTextePersonnaliseState
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: widget.controller,
-      keyboardType: widget.keyboardType,
-      obscureText: masquerTexte,
-
-      decoration: InputDecoration(
-        hintText: widget.hintText,
-
-        prefixIcon: Icon(
-          widget.icone,
-          color: CouleursApp.grisTexte,
-        ),
-
-        suffixIcon: widget.motDePasse
-            ? IconButton(
-                onPressed: () {
-                  setState(() {
-                    masquerTexte = !masquerTexte;
-                  });
-                },
-                icon: Icon(
-                  masquerTexte
-                      ? Icons.visibility_off_outlined
-                      : Icons.visibility_outlined,
-                ),
-              )
-            : null,
-
-        filled: true,
-        fillColor: Colors.white,
-
-        contentPadding: const EdgeInsets.symmetric(
-          vertical: 18,
-          horizontal: 16,
-        ),
-
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: CouleursApp.bordure,
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(
+              alpha: 0.06,
+            ),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-        ),
+        ],
+      ),
+      child: TextField(
+        controller: widget.controller,
+        keyboardType: widget.keyboardType,
+        obscureText: masquerTexte,
 
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: CouleursApp.orange,
-            width: 2,
+        decoration: InputDecoration(
+          hintText: widget.hintText,
+
+          hintStyle: const TextStyle(
+            color: CouleursApp.grisTexte,
+          ),
+
+          prefixIcon: Icon(
+            widget.icone,
+            color: CouleursApp.grisTexte,
+          ),
+
+          suffixIcon: widget.motDePasse
+              ? IconButton(
+                  onPressed: () {
+                    setState(() {
+                      masquerTexte =
+                          !masquerTexte;
+                    });
+                  },
+                  icon: Icon(
+                    masquerTexte
+                        ? Icons
+                            .visibility_off_outlined
+                        : Icons
+                            .visibility_outlined,
+                  ),
+                )
+              : null,
+
+          filled: true,
+          fillColor: Colors.white,
+
+          contentPadding:
+              const EdgeInsets.symmetric(
+            vertical: 18,
+            horizontal: 16,
+          ),
+
+          border: OutlineInputBorder(
+            borderRadius:
+                BorderRadius.circular(8),
+            borderSide: BorderSide.none,
+          ),
+
+          enabledBorder:
+              OutlineInputBorder(
+            borderRadius:
+                BorderRadius.circular(8),
+            borderSide: BorderSide.none,
+          ),
+
+          focusedBorder:
+              OutlineInputBorder(
+            borderRadius:
+                BorderRadius.circular(8),
+            borderSide:
+                const BorderSide(
+              color: CouleursApp.orange,
+              width: 1.5,
+            ),
           ),
         ),
       ),

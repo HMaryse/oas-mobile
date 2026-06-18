@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../reparations/reparation_ecran.dart';
 import '../factures/facture_ecran.dart';
-import '../paiements/recus_paiement_ecran.dart';
+import '../proformas/liste_proformas_ecran.dart';
 import '../parametres/parametres_ecran.dart';
 
 class MenuLateral extends StatelessWidget {
@@ -82,12 +82,12 @@ class MenuLateral extends StatelessWidget {
 
           ListTile(
             leading: const Icon(Icons.payments),
-            title: const Text("Mes reçus de paiement"),
+            title: const Text("Mes proformas"),
             onTap: () {
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const RecusPaiementEcran()),
+                MaterialPageRoute(builder: (_) => const ListeProformasEcran()),
               );
             },
           ),

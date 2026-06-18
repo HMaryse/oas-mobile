@@ -297,7 +297,7 @@ class _ReservationRendezVousEcranState
                 height: 24),
 
             const Text(
-              "Véhicule",
+              "Choisissez votre véhicule",
               style: TextStyle(
                 fontWeight:
                     FontWeight.w600,
@@ -502,7 +502,7 @@ class _ReservationRendezVousEcranState
               decoration:
                   _decoration(
                 hint:
-                    "Décrivez le motif de votre visite",
+                    "Décrivez le motif de votre visite, les pannes de votre vehicule,etc.",
               ),
             ),
 
