@@ -25,6 +25,7 @@ class _FormulaireVehiculeEcranState
     extends State<FormulaireVehiculeEcran> {
 
   final modeleController = TextEditingController();
+  final marqueController = TextEditingController();
   final immatriculationController =
       TextEditingController();
   final kilometrageController =
@@ -32,23 +33,12 @@ class _FormulaireVehiculeEcranState
   final numeroChassisController =
       TextEditingController();
 
-  String? marqueSelectionnee;
   String? anneeSelectionnee;
   final VehiculeRepository repository =
     VehiculeRepository();
 
 bool chargement = false;
 
-  final List<String> marques = [
-    "Toyota",
-    "Renault",
-    "Peugeot",
-    "Kia",
-    "Hyundai",
-    "Nissan",
-    "BMW",
-    "Mercedes",
-  ];
 
   final List<String> annees = List.generate(
     26,
@@ -57,7 +47,7 @@ bool chargement = false;
 
   Future<void> enregistrerVehicule() async {
 
-  if (marqueSelectionnee == null ||
+  if (marqueController.text.trim().isEmpty ||
       anneeSelectionnee == null ||
       modeleController.text.isEmpty ||
       immatriculationController.text.isEmpty ||
@@ -91,7 +81,7 @@ bool chargement = false;
           modeleController.text.trim(),
 
       marque:
-          marqueSelectionnee!,
+        marqueController.text.trim(),
 
       kilometrage:
           double.parse(
@@ -265,24 +255,12 @@ bool chargement = false;
 
             const SizedBox(height: 8),
 
-            DropdownButtonFormField<String>(
-              value: marqueSelectionnee,
-              decoration: _decoration(),
+            TextFormField(
+              controller: marqueController,
 
-              items: marques
-                  .map(
-                    (marque) => DropdownMenuItem(
-                      value: marque,
-                      child: Text(marque),
-                    ),
-                  )
-                  .toList(),
-
-              onChanged: (value) {
-                setState(() {
-                  marqueSelectionnee = value;
-                });
-              },
+              decoration: _decoration(
+                hint: "Ex : Toyota",
+              ),
             ),
 
             const SizedBox(height: 16),
