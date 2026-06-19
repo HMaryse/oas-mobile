@@ -404,13 +404,13 @@ class _ListeRendezVousEcranState
                     );
                   },
 
-                  onAnnuler:
-                      () {
-
-                    _confirmerAnnulation(
-                      context,
-                    );
-                  },
+                  onAnnuler: rdv.statut == "EN_ATTENTE"
+                    ? () {
+                        _confirmerAnnulation(
+                          context,
+                        );
+                      }
+                    : null,
                 );
               },
             ),

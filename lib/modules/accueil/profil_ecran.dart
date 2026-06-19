@@ -4,6 +4,7 @@ import '../../core/theme/couleurs_app.dart';
 import '../authentification/connexion_ecran.dart';
 import 'models/profil_model.dart';
 import 'repository/profil_repository.dart';
+import '../parametres/parametres_ecran.dart';
 
 class ProfilEcran extends StatefulWidget {
   const ProfilEcran({super.key});
@@ -84,21 +85,35 @@ class _ProfilEcranState
           CouleursApp.grisFond,
 
       appBar: AppBar(
-        backgroundColor:
-            CouleursApp.grisFond,
-        elevation: 0,
-        centerTitle: true,
+  backgroundColor: CouleursApp.grisFond,
+  elevation: 0,
+  centerTitle: true,
 
-        title: const Text(
-          "Mon Profil",
-          style: TextStyle(
-            color:
-                CouleursApp.bleuFonce,
-            fontWeight:
-                FontWeight.bold,
-          ),
-        ),
+  title: const Text(
+    "Mon Profil",
+    style: TextStyle(
+      color: CouleursApp.bleuFonce,
+      fontWeight: FontWeight.bold,
+    ),
+  ),
+
+  actions: [
+    IconButton(
+      icon: const Icon(
+        Icons.settings_outlined,
+        color: CouleursApp.bleuFonce,
       ),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) =>const ParametresEcran(),
+          ),
+        );
+      },
+    ),
+  ],
+),
 
       body: RefreshIndicator(
         onRefresh: chargerProfil,
@@ -114,105 +129,110 @@ class _ProfilEcranState
             children: [
 
               Container(
-                width: double.infinity,
-                padding:
-                    const EdgeInsets.all(
-                        24),
+  width: double.infinity,
 
-                decoration:
-                    BoxDecoration(
-                  color:
-                      Colors.white,
-                  borderRadius:
-                      BorderRadius
-                          .circular(
-                              20),
-                ),
+  padding: const EdgeInsets.all(18),
 
-                child: Column(
-                  children: [
+  decoration: BoxDecoration(
+  gradient: const LinearGradient(
+    colors: [
+      CouleursApp.bleuFonce,
+      Color(0xFF1E3A8A),
+    ],
+  ),
 
-                    CircleAvatar(
-                      radius: 42,
-                      backgroundColor:
-                          CouleursApp
-                              .bleuFonce,
+  borderRadius:
+      BorderRadius.circular(12),
 
-                      child: Text(
-                        initiales,
+  boxShadow: [
+    BoxShadow(
+      color:
+          Colors.black.withOpacity(
+        0.08,
+      ),
+      blurRadius: 12,
+      offset: const Offset(
+        0,
+        4,
+      ),
+    ),
+  ],
+),
 
-                        style:
-                            const TextStyle(
-                          color:
-                              Colors.white,
-                          fontSize:
-                              26,
-                          fontWeight:
-                              FontWeight
-                                  .bold,
-                        ),
-                      ),
-                    ),
+  child: Row(
+    children: [
 
-                    const SizedBox(
-                        height: 14),
+      Expanded(
+        child: Column(
+          crossAxisAlignment:
+              CrossAxisAlignment.start,
 
-                    Text(
-                      "${profil!.firstName} ${profil!.lastName}",
+          children: [
 
-                      style:
-                          const TextStyle(
-                        fontSize: 22,
-                        fontWeight:
-                            FontWeight
-                                .bold,
-                      ),
-                    ),
+            Text(
+              "${profil!.firstName} ${profil!.lastName}",
 
-                    const SizedBox(
-                        height: 6),
-
-                    Container(
-                      padding:
-                          const EdgeInsets
-                              .symmetric(
-                        horizontal:
-                            12,
-                        vertical: 6,
-                      ),
-
-                      decoration:
-                          BoxDecoration(
-                        color: Colors
-                            .orange
-                            .shade100,
-
-                        borderRadius:
-                            BorderRadius
-                                .circular(
-                                    20),
-                      ),
-
-                      child: Text(
-                        profil!
-                            .matricule,
-
-                        style:
-                            const TextStyle(
-                          color:
-                              CouleursApp
-                                  .orange,
-
-                          fontWeight:
-                              FontWeight
-                                  .bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              style:
+                  const TextStyle(
+                fontSize: 20,
+                fontWeight:
+                    FontWeight.bold,
+                color:
+                    Colors.white,
               ),
+            ),
 
+            const SizedBox(
+              height: 4,
+            ),
+
+            Text(
+              profil!.email,
+
+              style:
+                  const TextStyle(
+                color:
+                    CouleursApp.grisTexte,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+      ),
+
+      Container(
+        padding:
+            const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 8,
+        ),
+
+        decoration:
+            BoxDecoration(
+          color: CouleursApp.orange
+              .withOpacity(0.12),
+
+          borderRadius:
+              BorderRadius.circular(
+            20,
+          ),
+        ),
+
+        child: Text(
+          profil!.matricule,
+
+          style:
+              const TextStyle(
+            color:
+                CouleursApp.orange,
+            fontWeight:
+                FontWeight.bold,
+          ),
+        ),
+      ),
+    ],
+  ),
+),
               const SizedBox(
                   height: 20),
 
@@ -252,59 +272,83 @@ class _ProfilEcranState
                 "CLIENT",
               ),
 
-              const SizedBox(
-                  height: 24),
+              Container(
+  margin:
+      const EdgeInsets.only(
+          bottom: 12),
 
-              SizedBox(
-                width:
-                    double.infinity,
-                height: 55,
+  decoration: BoxDecoration(
+    color: Colors.white,
 
-                child:
-                    ElevatedButton.icon(
-                  onPressed: () {
+    borderRadius:
+        BorderRadius.circular(
+            12),
 
-                    ScaffoldMessenger.of(
-                            context)
-                        .showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          "Modification du profil à venir",
-                        ),
-                      ),
-                    );
-                  },
+    boxShadow: [
+      BoxShadow(
+        color:
+            Colors.black.withOpacity(
+                0.05),
+        blurRadius: 8,
+        offset:
+            const Offset(0, 2),
+      ),
+    ],
+  ),
 
-                  icon: const Icon(
-                    Icons
-                        .edit_outlined,
-                  ),
+  child: ListTile(
+    leading: Container(
+      padding:
+          const EdgeInsets.all(
+              10),
 
-                  label: const Text(
-                    "Modifier mes informations",
-                  ),
+      decoration:
+          BoxDecoration(
+        color:
+            CouleursApp.orange
+                .withOpacity(
+                    0.1),
 
-                  style:
-                      ElevatedButton
-                          .styleFrom(
-                    backgroundColor:
-                        CouleursApp
-                            .orange,
+        borderRadius:
+            BorderRadius
+                .circular(
+                    10),
+      ),
 
-                    foregroundColor:
-                        Colors.white,
+      child: const Icon(
+        Icons.settings_outlined,
+        color:
+            CouleursApp.orange,
+      ),
+    ),
 
-                    shape:
-                        RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius
-                              .circular(
-                                  14),
-                    ),
-                  ),
-                ),
-              ),
+    title: const Text(
+      "Paramètres",
+      style: TextStyle(
+        fontWeight:
+            FontWeight.w600,
+      ),
+    ),
 
+    subtitle: const Text(
+      "Préférences et sécurité",
+    ),
+
+    trailing: const Icon(
+      Icons.chevron_right,
+    ),
+
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) =>
+              const ParametresEcran(),
+        ),
+      );
+    },
+  ),
+),
               const SizedBox(
                   height: 12),
 
@@ -446,11 +490,23 @@ class _ProfilEcranState
           const EdgeInsets.all(16),
 
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius:
-            BorderRadius.circular(
-                16),
-      ),
+  color: Colors.white,
+
+  borderRadius:
+      BorderRadius.circular(
+          12),
+
+  boxShadow: [
+    BoxShadow(
+      color:
+          Colors.black.withOpacity(
+              0.05),
+      blurRadius: 8,
+      offset:
+          const Offset(0, 2),
+    ),
+  ],
+),
 
       child: Row(
         children: [

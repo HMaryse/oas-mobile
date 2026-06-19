@@ -42,66 +42,90 @@ class CarteRendezVous extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-
-      padding: const EdgeInsets.all(16),
-
+      margin: const EdgeInsets.only(
+        bottom: 16,
+      ),
+      padding: const EdgeInsets.all(
+        16,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius:
+            BorderRadius.circular(
+          12,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black
+                .withOpacity(0.05),
+            blurRadius: 8,
+            offset:
+                const Offset(0, 2),
+          ),
+        ],
       ),
-
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-
+        crossAxisAlignment:
+            CrossAxisAlignment.start,
         children: [
-
           Row(
             children: [
-
               Container(
-                padding: const EdgeInsets.all(12),
-
-                decoration: BoxDecoration(
-                  color:
-                      CouleursApp.orange.withOpacity(
+                padding:
+                    const EdgeInsets.all(
+                  12,
+                ),
+                decoration:
+                    BoxDecoration(
+                  color: CouleursApp
+                      .orange
+                      .withOpacity(
                     0.1,
                   ),
-
                   borderRadius:
-                      BorderRadius.circular(12),
+                      BorderRadius
+                          .circular(
+                    10,
+                  ),
                 ),
-
                 child: const Icon(
                   Icons.calendar_month,
-                  color: CouleursApp.orange,
+                  color:
+                      CouleursApp.orange,
                 ),
               ),
 
-              const SizedBox(width: 12),
+              const SizedBox(
+                width: 12,
+              ),
 
               Expanded(
                 child: Column(
                   crossAxisAlignment:
-                      CrossAxisAlignment.start,
-
+                      CrossAxisAlignment
+                          .start,
                   children: [
-
                     Text(
                       vehicule,
-                      style: const TextStyle(
+                      style:
+                          const TextStyle(
                         fontWeight:
-                            FontWeight.bold,
+                            FontWeight
+                                .bold,
                         fontSize: 16,
                       ),
                     ),
 
-                    const SizedBox(height: 4),
+                    const SizedBox(
+                      height: 4,
+                    ),
 
                     Text(
                       "$date • $heure",
-                      style: const TextStyle(
-                        color: Colors.grey,
+                      style:
+                          const TextStyle(
+                        color:
+                            Colors.grey,
                       ),
                     ),
                   ],
@@ -110,26 +134,29 @@ class CarteRendezVous extends StatelessWidget {
 
               Container(
                 padding:
-                    const EdgeInsets.symmetric(
+                    const EdgeInsets
+                        .symmetric(
                   horizontal: 12,
                   vertical: 6,
                 ),
-
-                decoration: BoxDecoration(
+                decoration:
+                    BoxDecoration(
                   color:
-                      couleurStatut().withOpacity(
+                      couleurStatut()
+                          .withOpacity(
                     .15,
                   ),
-
                   borderRadius:
-                      BorderRadius.circular(20),
+                      BorderRadius
+                          .circular(
+                    20,
+                  ),
                 ),
-
                 child: Text(
                   statut,
-
                   style: TextStyle(
-                    color: couleurStatut(),
+                    color:
+                        couleurStatut(),
                     fontWeight:
                         FontWeight.bold,
                   ),
@@ -138,26 +165,33 @@ class CarteRendezVous extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(
+            height: 16,
+          ),
 
           Text(
             motif,
-            style: const TextStyle(
+            style:
+                const TextStyle(
               color: Colors.grey,
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(
+            height: 16,
+          ),
 
           Row(
             children: [
-
               Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: onDetails,
+                child:
+                    ElevatedButton.icon(
+                  onPressed:
+                      onDetails,
 
                   icon: const Icon(
-                    Icons.visibility_outlined,
+                    Icons
+                        .visibility_outlined,
                   ),
 
                   label: const Text(
@@ -165,35 +199,68 @@ class CarteRendezVous extends StatelessWidget {
                   ),
 
                   style:
-                      ElevatedButton.styleFrom(
+                      ElevatedButton
+                          .styleFrom(
                     backgroundColor:
-                        CouleursApp.orange,
-
+                        CouleursApp
+                            .orange,
                     foregroundColor:
                         Colors.white,
-                  ),
-                ),
-              ),
-
-              const SizedBox(width: 10),
-
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: onAnnuler,
-
-                  icon: const Icon(
-                    Icons.close,
-                    color: Colors.red,
-                  ),
-
-                  label: const Text(
-                    "Annuler",
-                    style: TextStyle(
-                      color: Colors.red,
+                    shape:
+                        RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius
+                              .circular(
+                        10,
+                      ),
                     ),
                   ),
                 ),
               ),
+
+              if (onAnnuler !=
+                  null) ...[
+                const SizedBox(
+                  width: 10,
+                ),
+
+                Expanded(
+                  child:
+                      OutlinedButton.icon(
+                    onPressed:
+                        onAnnuler,
+
+                    icon: const Icon(
+                      Icons.close,
+                      color:
+                          Colors.red,
+                    ),
+
+                    label:
+                        const Text(
+                      "Annuler",
+                      style:
+                          TextStyle(
+                        color:
+                            Colors.red,
+                      ),
+                    ),
+
+                    style:
+                        OutlinedButton
+                            .styleFrom(
+                      shape:
+                          RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius
+                                .circular(
+                          10,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ],

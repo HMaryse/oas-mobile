@@ -11,6 +11,9 @@ import '../proformas/liste_proformas_ecran.dart';
 import '../rendez_vous/reservation_rendez_vous_ecran.dart';
 import '../reparations/reparation_ecran.dart';
 import '../vehicules/formulaire_vehicule_ecran.dart';
+import '../factures/repository/facture_repository.dart';
+import '../reparations/repository/reparation_repository.dart';
+import '../rendez_vous/repository/rendez_vous_repository.dart';
 
 class AccueilEcran extends StatefulWidget {
   const AccueilEcran({super.key});
@@ -21,10 +24,18 @@ class AccueilEcran extends StatefulWidget {
 
 class _AccueilEcranState extends State<AccueilEcran> {
   final ClientRepository clientRepository = ClientRepository();
+  final FactureRepository factureRepository = FactureRepository();
+
+  final ReparationRepository reparationRepository = ReparationRepository();
+
+  final RendezVousRepository rendezVousRepository = RendezVousRepository();
 
   ClientModel? client;
 
   bool chargement = true;
+  int nombreRdv = 0;
+  int nombreReparations = 0;
+  int nombreFactures = 0;
 
   @override
   void initState() {
@@ -33,21 +44,47 @@ class _AccueilEcranState extends State<AccueilEcran> {
   }
 
   Future<void> chargerProfil() async {
-    try {
-      final resultat = await clientRepository.getProfil();
+  try {
 
-      setState(() {
-        client = resultat;
-        chargement = false;
-      });
-    } catch (e) {
-      setState(() {
-        chargement = false;
-      });
+    final profil =
+        await clientRepository.getProfil();
 
-      debugPrint("Erreur chargement profil : $e");
-    }
+    final factures =
+        await factureRepository.getFactures();
+
+    final reparations =
+        await reparationRepository.getReparations();
+
+    final rdvs =
+        await rendezVousRepository.getRendezVous();
+
+    setState(() {
+
+      client = profil;
+
+      nombreFactures =
+          factures.length;
+
+      nombreReparations =
+          reparations.length;
+
+      nombreRdv =
+          rdvs.length;
+
+      chargement = false;
+    });
+
+  } catch (e) {
+
+    setState(() {
+      chargement = false;
+    });
+
+    debugPrint(
+      "Erreur chargement accueil : $e",
+    );
   }
+}
 
   String getInitiales() {
     if (client == null) return "";
@@ -169,7 +206,7 @@ class _AccueilEcranState extends State<AccueilEcran> {
                   children: [
                     CarteStatistique(
                       icone: Icons.calendar_today,
-                      valeur: "0",
+                      valeur: nombreRdv.toString(),
                       titre: "RDV actifs",
                     ),
 
@@ -177,7 +214,8 @@ class _AccueilEcranState extends State<AccueilEcran> {
 
                     CarteStatistique(
                       icone: Icons.handyman,
-                      valeur: "0",
+                      valeur:
+                        nombreReparations.toString(),
                       titre: "En réparation",
                     ),
 
@@ -185,7 +223,8 @@ class _AccueilEcranState extends State<AccueilEcran> {
 
                     CarteStatistique(
                       icone: Icons.receipt,
-                      valeur: "0",
+                      valeur:
+                            nombreFactures.toString(),
                       titre: "Factures",
                     ),
                   ],

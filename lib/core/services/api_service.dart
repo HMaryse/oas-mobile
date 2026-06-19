@@ -72,4 +72,27 @@ class ApiService {
       },
     );
   }
+  Future<http.Response> putWithBody(
+  String endpoint,
+  Map<String, dynamic> data,
+) async {
+
+  final token =
+      await StorageService.getToken();
+
+  return await http.put(
+    Uri.parse(
+      '${ApiConfig.baseUrl}$endpoint',
+    ),
+
+    headers: {
+      'Authorization':
+          'Bearer $token',
+      'Content-Type':
+          'application/json',
+    },
+
+    body: jsonEncode(data),
+  );
+}
 }
