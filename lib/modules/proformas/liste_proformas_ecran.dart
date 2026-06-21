@@ -393,98 +393,41 @@ class _ListeProformasEcranState
                             ),
 
                             Row(
-                              children: [
-                                Expanded(
-                                  child:
-                                      OutlinedButton(
-                                    onPressed:
-                                        () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder:
-                                              (_) =>
-                                                  DetailProformaEcran(
-                                            proforma:
-                                                proforma,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    child:
-                                        const Text(
-                                      "Détails",
-                                    ),
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () async {
+                              final resultat =
+                                  await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      DetailProformaEcran(
+                                    proforma: proforma,
                                   ),
                                 ),
+                              );
 
-                                if (proforma
-                                        .statut ==
-                                    "EN_ATTENTE") ...[
-                                  const SizedBox(
-                                    width: 8,
-                                  ),
-
-                                  Expanded(
-                                    child:
-                                        ElevatedButton(
-                                      onPressed:
-                                          () =>
-                                              validerProforma(
-                                        proforma
-                                            .id,
-                                      ),
-                                      style:
-                                          ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            Colors.green,
-                                        foregroundColor:
-                                            Colors.white,
-                                      ),
-                                      child:
-                                          const Text(
-                                        "Valider",
-                                      ),
-                                    ),
-                                  ),
-
-                                  const SizedBox(
-                                    width: 8,
-                                  ),
-
-                                  Expanded(
-                                    child:
-                                        ElevatedButton(
-                                      onPressed:
-                                          () =>
-                                              refuserProforma(
-                                        proforma
-                                            .id,
-                                      ),
-                                      style:
-                                          ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            Colors.red,
-                                        foregroundColor:
-                                            Colors.white,
-                                      ),
-                                      child:
-                                          const Text(
-                                        "Refuser",
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ],
+                              if (resultat == true) {
+                                chargerProformas();
+                              }
+                            },
+                            child: const Text(
+                              "Détails",
                             ),
-                          ],
+                          ),
                         ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-      ),
-    );
-  }
-}
+                      ],
+                    ),
+
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                          ),
+                        );
+                      }
+                    }

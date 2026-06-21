@@ -426,60 +426,78 @@ class _DetailProformaEcranState
               height: 24,
             ),
 
-            if (proforma.statut ==
-                'EN_ATTENTE')
-              Row(
-                children: [
+            if (proforma.statut == 'EN_ATTENTE')
+  Row(
+    children: [
 
-                  Expanded(
-                    child:
-                        ElevatedButton(
-                      onPressed:
-                          traitement
-                              ? null
-                              : validerProforma,
+      Expanded(
+        child: ElevatedButton.icon(
+          onPressed: traitement
+              ? null
+              : validerProforma,
 
-                      style:
-                          ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Colors.green,
-                        foregroundColor:
-                            Colors.white,
-                      ),
+          icon: const Icon(
+            Icons.check_circle_outline,
+          ),
 
-                      child: const Text(
-                        'Valider',
-                      ),
-                    ),
-                  ),
+          label: const Text(
+            'Accepter',
+          ),
 
-                  const SizedBox(
-                    width: 12,
-                  ),
-
-                  Expanded(
-                    child:
-                        ElevatedButton(
-                      onPressed:
-                          traitement
-                              ? null
-                              : refuserProforma,
-
-                      style:
-                          ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Colors.red,
-                        foregroundColor:
-                            Colors.white,
-                      ),
-
-                      child: const Text(
-                        'Refuser',
-                      ),
-                    ),
-                  ),
-                ],
+          style: ElevatedButton.styleFrom(
+            backgroundColor:
+                CouleursApp.orange,
+            foregroundColor:
+                Colors.white,
+            minimumSize:
+                const Size.fromHeight(50),
+            shape:
+                RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.circular(
+                12,
               ),
+            ),
+          ),
+        ),
+      ),
+
+      const SizedBox(width: 10),
+
+      Expanded(
+        child: OutlinedButton.icon(
+          onPressed: traitement
+              ? null
+              : refuserProforma,
+
+          icon: const Icon(
+            Icons.close,
+            color: Colors.red,
+          ),
+
+          label: const Text(
+            'Refuser',
+            style: TextStyle(
+              color: Colors.red,
+            ),
+          ),
+
+          style:
+              OutlinedButton.styleFrom(
+            minimumSize:
+                const Size.fromHeight(50),
+            shape:
+                RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.circular(
+                12,
+              ),
+            ),
+          ),
+        ),
+      ),
+    ],
+  ),
           ],
         ),
       ),

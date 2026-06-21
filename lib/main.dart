@@ -23,7 +23,6 @@ class OasMobile extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      //home: const NavigationPrincipale(),
       //home: const ConfirmationRendezVousEcran(),
       //home: const ReservationRendezVousEcran(),
       //home: const DetailRendezVousEcran(),

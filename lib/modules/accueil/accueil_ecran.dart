@@ -14,6 +14,8 @@ import '../vehicules/formulaire_vehicule_ecran.dart';
 import '../factures/repository/facture_repository.dart';
 import '../reparations/repository/reparation_repository.dart';
 import '../rendez_vous/repository/rendez_vous_repository.dart';
+import '../notifications/notifications_ecran.dart';
+import '../notifications/repository/notification_repository.dart';
 
 class AccueilEcran extends StatefulWidget {
   const AccueilEcran({super.key});
@@ -25,6 +27,9 @@ class AccueilEcran extends StatefulWidget {
 class _AccueilEcranState extends State<AccueilEcran> {
   final ClientRepository clientRepository = ClientRepository();
   final FactureRepository factureRepository = FactureRepository();
+  final NotificationRepository notificationRepository = NotificationRepository();
+
+  int nombreNotificationsNonLues = 0;
 
   final ReparationRepository reparationRepository = ReparationRepository();
 
@@ -57,6 +62,9 @@ class _AccueilEcranState extends State<AccueilEcran> {
 
     final rdvs =
         await rendezVousRepository.getRendezVous();
+    
+    final notifications = await notificationRepository.getNotifications();
+    
 
     setState(() {
 
@@ -71,6 +79,8 @@ class _AccueilEcranState extends State<AccueilEcran> {
       nombreRdv =
           rdvs.length;
 
+      nombreNotificationsNonLues =
+    notifications.where((n) => !n.lu).length;
       chargement = false;
     });
 
@@ -158,7 +168,8 @@ class _AccueilEcranState extends State<AccueilEcran> {
                           children: [
                             Text(
                               "${client?.firstName ?? ''} ${client?.lastName ?? ''}",
-
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -168,37 +179,90 @@ class _AccueilEcranState extends State<AccueilEcran> {
 
                             Text(
                               client?.phone ?? "",
-
-                              style: const TextStyle(color: Colors.grey),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: Colors.grey,
+                              ),
                             ),
                           ],
                         ),
                       ),
 
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
-                        ),
+                      Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
 
-                        decoration: BoxDecoration(
-                          color: Colors.orange.shade100,
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
 
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+                              decoration: BoxDecoration(
+                                color: Colors.orange.shade100,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
 
-                        child: Text(
-                          client?.matricule ?? "",
+                              child: Text(
+                                client?.matricule ?? "",
+                                style: const TextStyle(
+                                  color: Colors.orange,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
 
-                          style: const TextStyle(
-                            color: Colors.orange,
-                            fontWeight: FontWeight.bold,
-                          ),
+                            const SizedBox(width: 8),
+
+                            Stack(
+                                  children: [
+
+                                    IconButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                const NotificationsEcran(),
+                                          ),
+                                        );
+                                      },
+
+                                      icon: const Icon(
+                                        Icons.notifications_outlined,
+                                        color: CouleursApp.bleuFonce,
+                                      ),
+                                    ),
+
+                                    if (nombreNotificationsNonLues > 0)
+                                      Positioned(
+                                        right: 0,
+                                        top: 0,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(5),
+                                          decoration: const BoxDecoration(
+                                            color: Colors.red,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Text(
+                                            nombreNotificationsNonLues.toString(),
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
+                
 
                 const SizedBox(height: 20),
 
@@ -331,6 +395,7 @@ class _AccueilEcranState extends State<AccueilEcran> {
             ),
           ),
         ),
+          
       ),
     );
   }
